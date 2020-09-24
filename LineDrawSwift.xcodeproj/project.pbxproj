@@ -15,6 +15,14 @@
 		5238F582251B3CD600372336 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5238F580251B3CD600372336 /* LaunchScreen.storyboard */; };
 		5238F58D251B3CD600372336 /* LineDrawSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5238F58C251B3CD600372336 /* LineDrawSwiftTests.swift */; };
 		5238F598251B3CD600372336 /* LineDrawSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5238F597251B3CD600372336 /* LineDrawSwiftUITests.swift */; };
+		5244BCE3251C6FCB00DDB077 /* BaseBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCE2251C6FCB00DDB077 /* BaseBrush.swift */; };
+		5244BCE5251C6FE500DDB077 /* EllipseBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCE4251C6FE500DDB077 /* EllipseBrush.swift */; };
+		5244BCE7251C6FEF00DDB077 /* EraserBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCE6251C6FEF00DDB077 /* EraserBrush.swift */; };
+		5244BCE9251C6FF800DDB077 /* LineBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCE8251C6FF800DDB077 /* LineBrush.swift */; };
+		5244BCEB251C700800DDB077 /* PenBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCEA251C700800DDB077 /* PenBrush.swift */; };
+		5244BCED251C701900DDB077 /* RectBrush.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCEC251C701900DDB077 /* RectBrush.swift */; };
+		5244BCEF251C701E00DDB077 /* TouchDrawView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCEE251C701E00DDB077 /* TouchDrawView.swift */; };
+		5244BCF5251CAD5200DDB077 /* OverlayView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5244BCF4251CAD5200DDB077 /* OverlayView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -49,6 +57,14 @@
 		5238F593251B3CD600372336 /* LineDrawSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LineDrawSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5238F597251B3CD600372336 /* LineDrawSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineDrawSwiftUITests.swift; sourceTree = "<group>"; };
 		5238F599251B3CD600372336 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		5244BCE2251C6FCB00DDB077 /* BaseBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = BaseBrush.swift; sourceTree = "<group>"; };
+		5244BCE4251C6FE500DDB077 /* EllipseBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EllipseBrush.swift; sourceTree = "<group>"; };
+		5244BCE6251C6FEF00DDB077 /* EraserBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = EraserBrush.swift; sourceTree = "<group>"; };
+		5244BCE8251C6FF800DDB077 /* LineBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LineBrush.swift; sourceTree = "<group>"; };
+		5244BCEA251C700800DDB077 /* PenBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PenBrush.swift; sourceTree = "<group>"; };
+		5244BCEC251C701900DDB077 /* RectBrush.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = RectBrush.swift; sourceTree = "<group>"; };
+		5244BCEE251C701E00DDB077 /* TouchDrawView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TouchDrawView.swift; sourceTree = "<group>"; };
+		5244BCF4251CAD5200DDB077 /* OverlayView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OverlayView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -106,6 +122,8 @@
 				5238F57E251B3CD600372336 /* Assets.xcassets */,
 				5238F580251B3CD600372336 /* LaunchScreen.storyboard */,
 				5238F583251B3CD600372336 /* Info.plist */,
+				5238F5AD251B6DCE00372336 /* Drawing View */,
+				5244BCF4251CAD5200DDB077 /* OverlayView.swift */,
 			);
 			path = LineDrawSwift;
 			sourceTree = "<group>";
@@ -126,6 +144,20 @@
 				5238F599251B3CD600372336 /* Info.plist */,
 			);
 			path = LineDrawSwiftUITests;
+			sourceTree = "<group>";
+		};
+		5238F5AD251B6DCE00372336 /* Drawing View */ = {
+			isa = PBXGroup;
+			children = (
+				5244BCE2251C6FCB00DDB077 /* BaseBrush.swift */,
+				5244BCE4251C6FE500DDB077 /* EllipseBrush.swift */,
+				5244BCEA251C700800DDB077 /* PenBrush.swift */,
+				5244BCE6251C6FEF00DDB077 /* EraserBrush.swift */,
+				5244BCE8251C6FF800DDB077 /* LineBrush.swift */,
+				5244BCEC251C701900DDB077 /* RectBrush.swift */,
+				5244BCEE251C701E00DDB077 /* TouchDrawView.swift */,
+			);
+			path = "Drawing View";
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -261,7 +293,15 @@
 			files = (
 				5238F57A251B3CD200372336 /* ViewController.swift in Sources */,
 				5238F576251B3CD200372336 /* AppDelegate.swift in Sources */,
+				5244BCE7251C6FEF00DDB077 /* EraserBrush.swift in Sources */,
+				5244BCED251C701900DDB077 /* RectBrush.swift in Sources */,
+				5244BCE9251C6FF800DDB077 /* LineBrush.swift in Sources */,
 				5238F578251B3CD200372336 /* SceneDelegate.swift in Sources */,
+				5244BCE3251C6FCB00DDB077 /* BaseBrush.swift in Sources */,
+				5244BCEB251C700800DDB077 /* PenBrush.swift in Sources */,
+				5244BCF5251CAD5200DDB077 /* OverlayView.swift in Sources */,
+				5244BCEF251C701E00DDB077 /* TouchDrawView.swift in Sources */,
+				5244BCE5251C6FE500DDB077 /* EllipseBrush.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -435,6 +475,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S27FAGF43P;
 				INFOPLIST_FILE = LineDrawSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -452,6 +493,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_STYLE = Automatic;
+				DEVELOPMENT_TEAM = S27FAGF43P;
 				INFOPLIST_FILE = LineDrawSwift/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

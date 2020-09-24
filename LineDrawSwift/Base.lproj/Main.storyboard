@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="13122.16" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="13104.12"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
@@ -9,16 +10,135 @@
         <!--View Controller-->
         <scene sceneID="tne-QT-ifu">
             <objects>
-                <viewController id="BYZ-38-t0r" customClass="ViewController" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="LineDrawSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" xcode11CocoaTouchSystemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <subviews>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cGg-yT-wvT" customClass="TouchDrawView" customModule="LineDrawSwift" customModuleProvider="target">
+                                <rect key="frame" x="0.0" y="44" width="414" height="688.5"/>
+                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            </view>
+                            <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="bottom" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="IFe-R7-qSA">
+                                <rect key="frame" x="0.0" y="796.5" width="414" height="65.5"/>
+                                <subviews>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iNI-KP-b4M">
+                                        <rect key="frame" x="0.0" y="0.0" width="76.5" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="23"/>
+                                        <state key="normal" title="Draw">
+                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tappedOnDrawButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dbP-4A-59h"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7If-xx-mNA">
+                                        <rect key="frame" x="84.5" y="0.0" width="76.5" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="Eraser">
+                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tappedOnEraseButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BG9-hu-IMM"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="81a-gC-y3y">
+                                        <rect key="frame" x="169" y="0.0" width="76" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="Line">
+                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tappedOnLine:" destination="BYZ-38-t0r" eventType="touchUpInside" id="wod-jo-mWV"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hr5-Wk-uwA">
+                                        <rect key="frame" x="253" y="0.0" width="76.5" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="Rect">
+                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tappedOnRect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nYr-xQ-vng"/>
+                                        </connections>
+                                    </button>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVi-nO-MUV">
+                                        <rect key="frame" x="337.5" y="0.0" width="76.5" height="65.5"/>
+                                        <fontDescription key="fontDescription" type="system" pointSize="24"/>
+                                        <state key="normal" title="Ellips">
+                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                        </state>
+                                        <connections>
+                                            <action selector="tappedOnEllips:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sgG-DM-Not"/>
+                                        </connections>
+                                    </button>
+                                </subviews>
+                                <constraints>
+                                    <constraint firstAttribute="bottom" secondItem="GVi-nO-MUV" secondAttribute="bottom" id="9yV-s9-rlo"/>
+                                    <constraint firstAttribute="bottom" secondItem="81a-gC-y3y" secondAttribute="bottom" id="AmW-D0-2hJ"/>
+                                    <constraint firstItem="iNI-KP-b4M" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="BRf-If-R2c"/>
+                                    <constraint firstAttribute="bottom" secondItem="iNI-KP-b4M" secondAttribute="bottom" id="Nph-MC-H6S"/>
+                                    <constraint firstItem="iNI-KP-b4M" firstAttribute="leading" secondItem="IFe-R7-qSA" secondAttribute="leading" id="Ozg-st-XNQ"/>
+                                    <constraint firstAttribute="bottom" secondItem="7If-xx-mNA" secondAttribute="bottom" id="U8t-D2-aPS"/>
+                                    <constraint firstAttribute="trailing" secondItem="GVi-nO-MUV" secondAttribute="trailing" id="ULS-2n-eIb"/>
+                                    <constraint firstItem="7If-xx-mNA" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="ZpW-Mj-dHM"/>
+                                    <constraint firstItem="GVi-nO-MUV" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="daB-Ui-2JG"/>
+                                    <constraint firstAttribute="bottom" secondItem="Hr5-Wk-uwA" secondAttribute="bottom" id="gOs-G0-2Tm"/>
+                                    <constraint firstItem="Hr5-Wk-uwA" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="jbY-W3-YR9"/>
+                                    <constraint firstItem="81a-gC-y3y" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="jpM-ca-cST"/>
+                                </constraints>
+                            </stackView>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6r7-lO-ryU">
+                                <rect key="frame" x="207" y="732.5" width="207" height="64"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="bYH-zZ-VRP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <state key="normal" title="Redo">
+                                    <color key="titleColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="tappedOnRedo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XwR-AJ-tEb"/>
+                                </connections>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RPq-o9-2Gg">
+                                <rect key="frame" x="0.0" y="732.5" width="207" height="64"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="32"/>
+                                <state key="normal" title="Undo">
+                                    <color key="titleColor" red="0.78039215689999997" green="0.41903586968661144" blue="0.55248571860479045" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="tappedOnUndo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y74-Me-5rv"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <constraints>
+                            <constraint firstItem="IFe-R7-qSA" firstAttribute="top" secondItem="6r7-lO-ryU" secondAttribute="bottom" id="2SG-UD-GMZ"/>
+                            <constraint firstItem="6r7-lO-ryU" firstAttribute="leading" secondItem="RPq-o9-2Gg" secondAttribute="trailing" id="5Ss-dD-e8V"/>
+                            <constraint firstItem="IFe-R7-qSA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="7XK-u4-FvX"/>
+                            <constraint firstItem="IFe-R7-qSA" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Q5e-WM-BY9"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IFe-R7-qSA" secondAttribute="trailing" id="QTh-eu-Jmb"/>
+                            <constraint firstItem="RPq-o9-2Gg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Saw-Y9-kB1"/>
+                            <constraint firstItem="IFe-R7-qSA" firstAttribute="height" secondItem="6Tk-OE-BBY" secondAttribute="height" multiplier="0.08" id="Tlh-NL-3i4"/>
+                            <constraint firstItem="6r7-lO-ryU" firstAttribute="top" secondItem="cGg-yT-wvT" secondAttribute="bottom" id="UnC-tr-Lwb"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6r7-lO-ryU" secondAttribute="trailing" id="dq9-L1-6SP"/>
+                            <constraint firstItem="cGg-yT-wvT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="fVr-cj-7bf"/>
+                            <constraint firstItem="RPq-o9-2Gg" firstAttribute="top" secondItem="cGg-yT-wvT" secondAttribute="bottom" id="jqz-AI-EGv"/>
+                            <constraint firstItem="IFe-R7-qSA" firstAttribute="top" secondItem="RPq-o9-2Gg" secondAttribute="bottom" id="onU-46-Obr"/>
+                            <constraint firstItem="cGg-yT-wvT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="pdf-9q-3Hy"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cGg-yT-wvT" secondAttribute="trailing" id="qpi-fO-puT"/>
+                            <constraint firstItem="6r7-lO-ryU" firstAttribute="width" secondItem="cGg-yT-wvT" secondAttribute="width" multiplier="0.5" id="y6H-25-9Xd"/>
+                        </constraints>
                         <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
+                    <connections>
+                        <outlet property="drawingView" destination="cGg-yT-wvT" id="Zb9-v9-z2c"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
             </objects>
+            <point key="canvasLocation" x="137.68115942028987" y="101.78571428571428"/>
         </scene>
     </scenes>
 </document>
