@@ -34,22 +34,22 @@ open class TouchDrawView: UIView {
     fileprivate var brush: BaseBrush?
     fileprivate var brushStack = [BaseBrush]()
     fileprivate var drawUndoManager = UndoManager()
-    fileprivate var drawImageView = DrawImageView()
+    fileprivate var drawingView = DrawingView()
     
     fileprivate var prevImage: UIImage?
     fileprivate var image: UIImage?
     
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
-        self.addSubview(drawImageView)
-        drawImageView.backgroundColor = UIColor.clear
+        self.addSubview(drawingView)
+        drawingView.backgroundColor = UIColor.clear
     }
   
     // Sets the frames of the subviews
     override open func draw(_ rect: CGRect) {
         print("Draw")
         image?.draw(in: bounds)
-        drawImageView.frame = self.bounds
+        drawingView.frame = self.bounds
     }
     
     // MARK: - Public
@@ -103,7 +103,7 @@ open class TouchDrawView: UIView {
         print("Wxport Image")
         beginImageContext()
         self.image?.draw(in: self.bounds)
-        drawImageView.image?.draw(in: self.bounds)
+        drawingView.image?.draw(in: self.bounds)
         return UIGraphicsGetImageFromCurrentImageContext()
     }
     
@@ -136,8 +136,8 @@ extension TouchDrawView {
         guard let allTouches = event?.allTouches else { return }
         if allTouches.count > 1 { return }
         brush = initBrushType()
-        drawImageView.brush = brush
-        drawImageView.type = self.brushType
+        drawingView.brush = brush
+        drawingView.type = self.brushType
    
         brush?.beginPoint = touches.first?.location(in: self)
         brush?.currentPoint = touches.first?.location(in: self)
@@ -169,10 +169,10 @@ extension TouchDrawView {
                 drawBox.origin.y -= lineWidth * 1
                 drawBox.size.width += lineWidth * 2
                 drawBox.size.height += lineWidth * 2
-                self.drawImageView.setNeedsDisplay(drawBox)
+                self.drawingView.setNeedsDisplay(drawBox)
                 
             } else {
-                self.drawImageView.setNeedsDisplay()
+                self.drawingView.setNeedsDisplay()
             }
         }
     }
@@ -214,21 +214,36 @@ extension TouchDrawView {
             finishDrawing()
         }
     }
-    func distance( a: CGPoint, b: CGPoint) -> CGFloat {
-        let xDist = a.x - b.x
-        let yDist = a.y - b.y
-        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
-    }
     
     override open func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
         print("touchesCancelled")
         touchesEnded(touches, with: event)
     }
     
+    open override func hitTest(_ point: CGPoint, with event: UIEvent?) -> UIView? {
+        print("Hit Test")
+        if self.point(inside: point, with: event) {
+            return super.hitTest(point, with: event)
+        }
+        guard isUserInteractionEnabled, !isHidden, alpha > 0 else {
+            return nil
+        }
+
+        for subview in subviews.reversed() {
+            let convertedPoint = subview.convert(point, from: self)
+            if let hitView = subview.hitTest(convertedPoint, with: event) {
+                return hitView
+            }
+        }
+        return nil
+    }
+    
     @objc fileprivate func popBrushStack() {
         print("popBrushStack")
-        drawUndoManager.registerUndo(withTarget: self, selector: #selector(pushBrushStack(_:)), object: brushStack.popLast())
-        redrawInContext()
+        if brushStack.count > 0 {
+            drawUndoManager.registerUndo(withTarget: self, selector: #selector(pushBrushStack(_:)), object: brushStack.popLast())
+            redrawInContext()
+        }
     }
     
     @objc fileprivate func pushBrushStack(_ brush: BaseBrush) {
@@ -236,6 +251,12 @@ extension TouchDrawView {
         drawUndoManager.registerUndo(withTarget: self, selector: #selector(popBrushStack), object: nil)
         brushStack.append(brush)
         redrawWithBrush(brush)
+    }
+    
+    func distance( a: CGPoint, b: CGPoint) -> CGFloat {
+           let xDist = a.x - b.x
+           let yDist = a.y - b.y
+           return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
 }
 
@@ -246,12 +267,17 @@ extension TouchDrawView {
         print("finishDrawing()")
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
         prevImage?.draw(in: self.bounds)
+        if brushType == .line{
+            brush = nil
+            drawingView.brush = nil
+            return
+        }
         brush?.drawInContext()
         prevImage = UIGraphicsGetImageFromCurrentImageContext()
-        drawImageView.image = prevImage
+        drawingView.image = prevImage
         UIGraphicsEndImageContext()
         brush = nil
-        drawImageView.brush = nil
+        drawingView.brush = nil
     }
     
     
@@ -264,7 +290,7 @@ extension TouchDrawView {
     /// Ends image context and sets UIImage to what was on the context
     fileprivate func endImageContext() {
         print("endImageContext()")
-        drawImageView.image = UIGraphicsGetImageFromCurrentImageContext()
+        drawingView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
 
@@ -276,19 +302,21 @@ extension TouchDrawView {
             brush.drawInContext()
         }
         endImageContext()
-        drawImageView.setNeedsDisplay()
-        prevImage = drawImageView.image
+        drawingView.setNeedsDisplay()
+        prevImage = drawingView.image
     }
     
     // Redraw last line for redo action
     fileprivate func redrawWithBrush(_ brush: BaseBrush) {
         print("redrawWithBrush")
         beginImageContext()
-        drawImageView.image?.draw(in: bounds)
-        brush.drawInContext()
+        drawingView.image?.draw(in: bounds)
+        if brush != nil {
+            brush.drawInContext()
+        }
         endImageContext()
-        drawImageView.setNeedsDisplay()
-        prevImage = drawImageView.image
+        drawingView.setNeedsDisplay()
+        prevImage = drawingView.image
     }
     
     fileprivate func clearDraw() {
@@ -297,7 +325,7 @@ extension TouchDrawView {
         beginImageContext()
         endImageContext()
         prevImage = nil
-        drawImageView.setNeedsDisplay()
+        drawingView.setNeedsDisplay()
         drawUndoManager.removeAllActions()
         delegate?.undoEnable(false)
         delegate?.redoEnable(false)
@@ -324,8 +352,8 @@ extension TouchDrawView {
          }
 }
 
-class DrawImageView: UIView {
-    
+//MARK: Drawing View
+class DrawingView: UIView {
     var image: UIImage?
     var brush: BaseBrush?
     var type: BrushType!
@@ -341,22 +369,3 @@ class DrawImageView: UIView {
         }
     }
 }
-
-
-//@inline(__always) func CGRectGetCenter(_ rect:CGRect) -> CGPoint {
-//    return CGPoint(x: rect.midX, y: rect.midY)
-//}
-//
-//@inline(__always) func CGRectScale(_ rect:CGRect, wScale:CGFloat, hScale:CGFloat) -> CGRect {
-//    return CGRect(x: rect.origin.x, y: rect.origin.y, width: rect.size.width * wScale, height: rect.size.height * hScale)
-//}
-//
-//@inline(__always) func CGAffineTransformGetAngle(_ t:CGAffineTransform) -> CGFloat {
-//    return atan2(t.b, t.a)
-//}
-//
-//@inline(__always) func CGPointGetDistance(point1:CGPoint, point2:CGPoint) -> CGFloat {
-//    let fx = point2.x - point1.x
-//    let fy = point2.y - point1.y
-//    return sqrt(fx * fx + fy * fy)
-//}

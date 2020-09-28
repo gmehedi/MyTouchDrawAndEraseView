@@ -9,7 +9,7 @@
 import UIKit
 
 class Extension: NSObject {
-
+    
 }
 extension UIView {
     func setAnchorPoint(_ point: CGPoint) {
@@ -30,4 +30,5 @@ extension UIView {
         layer.position = position
         layer.anchorPoint = point
     }
+    
 }

@@ -125,15 +125,15 @@ public class StickerView: UIView {
     }
     /// A convenient property for you to store extra information.
     public  var userInfo:Any?
-    
+    //MARK: Overlay View Initialize
     public  init(contentView: UIView, origin: CGPoint) {
         self.defaultInset = 11
-        self.defaultMinimumSize = 4 * self.defaultInset
+        self.defaultMinimumSize = 10
         
         var frame = contentView.frame
        // frame = CGRect(x: origin.x, y: origin.y, width: frame.size.width + CGFloat(self.defaultInset) * 2, height: frame.size.height + CGFloat(self.defaultInset) * 2)
         super.init(frame: frame)
-        self.backgroundColor = UIColor.clear
+        self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
         self.addGestureRecognizer(self.moveGesture)
         self.addGestureRecognizer(self.tapGesture)
         

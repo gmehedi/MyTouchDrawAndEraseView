@@ -14,8 +14,6 @@ import UIKit
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawViewDelegate{
     
-    
-    
     @IBOutlet weak var drawingView: TouchDrawView!
     var lineView: UIView!
     
