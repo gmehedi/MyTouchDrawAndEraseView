@@ -12,6 +12,7 @@ public protocol TouchDrawViewDelegate: class {
     
     func undoEnable(_ isEnable: Bool)
     func redoEnable(_ isEnable: Bool)
+    func addLine(frame: CGRect, angle: CGFloat)
 }
 
 public extension TouchDrawViewDelegate {
@@ -28,6 +29,7 @@ open class TouchDrawView: UIView {
     var lineColor = UIColor.red
     var lineAlpha: CGFloat = 1  
     var brushType: BrushType = .none
+    var deltaAngle: CGFloat!
     
     fileprivate var brush: BaseBrush?
     fileprivate var brushStack = [BaseBrush]()
@@ -135,6 +137,7 @@ extension TouchDrawView {
         if allTouches.count > 1 { return }
         brush = initBrushType()
         drawImageView.brush = brush
+        drawImageView.type = self.brushType
    
         brush?.beginPoint = touches.first?.location(in: self)
         brush?.currentPoint = touches.first?.location(in: self)
@@ -143,10 +146,14 @@ extension TouchDrawView {
         brush?.lineAlpha = lineAlpha
         brush?.lineWidth = lineWidth
         brush?.points.append(touches.first!.location(in: self))
+        
+//        if self.brushType == .line {
+//            self.deltaAngle = CGFloat(atan2f(Float(touches.y - center.y), Float(touchLocation.x - center.x))) - CGAffineTransformGetAngle(self.transform)
+//        }
     }
     
     override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
-        print("touchesMoved")
+      //  print("touches  54 454545   Moved")
         guard let allTouches = event?.allTouches else { return }
         if allTouches.count > 1 { return }
         
@@ -177,10 +184,40 @@ extension TouchDrawView {
             drawUndoManager.registerUndo(withTarget: self, selector: #selector(popBrushStack), object: nil)
             delegate?.undoEnable(drawUndoManager.canUndo)
             delegate?.redoEnable(drawUndoManager.canRedo)
-        }
+            let len = brushStack.count
+            if self.brushType == .line && len > 0 {
+                print("B11  ", brushStack.count)
+                let top = brushStack[len - 1]
+                let dist = distance(a: top.beginPoint!, b: top.currentPoint!)
 
-        touchesMoved(touches, with: event)
-        finishDrawing()
+                let angleR = atan2((top.currentPoint!.y - top.beginPoint!.y),(top.currentPoint!.x - top.beginPoint!.x))
+
+//                var angleD = CGFloat((angleR * 180.0) / .pi)
+//                print("Angle First   ", angleR, "   ", angleD)
+//                if top.beginPoint!.x > top.currentPoint!.x {
+//                    angleD += CGFloat(180.0)
+//                }
+//                angleD = CGFloat(angleD * .pi / 180.0)
+
+//                let lineView = UIView(frame: CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(10.0), height: top.lineWidth  + CGFloat(10.0)))
+//                lineView.backgroundColor = UIColor.black
+                let frame = CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(10.0), height: top.lineWidth  + CGFloat(40.0))
+                brushStack.popLast()
+                self.delegate?.addLine(frame: frame, angle: angleR)
+//                setAnchorPoint(point: CGPoint(x: 0, y: 0.5), lineView: lineView)
+//                lineView.transform = CGAffineTransform(rotationAngle: angleR)
+            }else{
+                print(".....................")
+                
+            }
+            touchesMoved(touches, with: event)
+            finishDrawing()
+        }
+    }
+    func distance( a: CGPoint, b: CGPoint) -> CGFloat {
+        let xDist = a.x - b.x
+        let yDist = a.y - b.y
+        return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
     
     override open func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
@@ -232,7 +269,7 @@ extension TouchDrawView {
     }
 
     // Redraw image for undo action
-    fileprivate func redrawInContext() {
+    func redrawInContext() {
         print("redrawInContext()")
         beginImageContext()
         for brush in brushStack {
@@ -265,20 +302,61 @@ extension TouchDrawView {
         delegate?.undoEnable(false)
         delegate?.redoEnable(false)
     }
+    
+    //MARK: Set Anchor Point
+    public func setAnchorPoint( point: CGPoint, lineView: UIView) {
+        var newPoint = CGPoint(x: lineView.bounds.size.width * point.x, y: lineView.bounds.size.height * point.y)
+        var oldPoint = CGPoint(x: lineView.bounds.size.width * lineView.layer.anchorPoint.x, y: lineView.bounds.size.height * lineView.layer.anchorPoint.y);
+
+             newPoint = newPoint.applying(transform)
+             oldPoint = oldPoint.applying(transform)
+
+             var position = lineView.layer.position
+
+             position.x -= oldPoint.x
+             position.x += newPoint.x
+
+             position.y -= oldPoint.y
+             position.y += newPoint.y
+
+             lineView.layer.position = position
+             lineView.layer.anchorPoint = point
+         }
 }
 
 class DrawImageView: UIView {
     
     var image: UIImage?
     var brush: BaseBrush?
+    var type: BrushType!
     
     override func draw(_ rect: CGRect) {
         print("draw(_ rect: CGRect) DrawImageView")
-        image?.draw(in: bounds)
-        brush?.drawInContext()
+        if self.type == .line{
+            //image?.draw(in: bounds) // export drawing
+            brush?.drawInContext() // preview drawing
+        }else{
+            image?.draw(in: bounds) // export drawing
+            brush?.drawInContext() // preview drawing
+        }
     }
-    
-    
 }
 
 
+//@inline(__always) func CGRectGetCenter(_ rect:CGRect) -> CGPoint {
+//    return CGPoint(x: rect.midX, y: rect.midY)
+//}
+//
+//@inline(__always) func CGRectScale(_ rect:CGRect, wScale:CGFloat, hScale:CGFloat) -> CGRect {
+//    return CGRect(x: rect.origin.x, y: rect.origin.y, width: rect.size.width * wScale, height: rect.size.height * hScale)
+//}
+//
+//@inline(__always) func CGAffineTransformGetAngle(_ t:CGAffineTransform) -> CGFloat {
+//    return atan2(t.b, t.a)
+//}
+//
+//@inline(__always) func CGPointGetDistance(point1:CGPoint, point2:CGPoint) -> CGFloat {
+//    let fx = point2.x - point1.x
+//    let fy = point2.y - point1.y
+//    return sqrt(fx * fx + fy * fy)
+//}

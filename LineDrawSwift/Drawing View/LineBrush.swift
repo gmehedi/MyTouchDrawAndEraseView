@@ -14,6 +14,7 @@ open class LineBrush: BaseBrush {
         print("drawInContext()")
         let context = initContext()
         context?.addLines(between: [beginPoint!, currentPoint!])
+        print("Begin  point   ", beginPoint!, currentPoint!)
         context?.strokePath()
     }
     
