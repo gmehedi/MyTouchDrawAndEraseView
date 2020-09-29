@@ -22,6 +22,7 @@ open class PenBrush: BaseBrush {
     }
     
     internal override func drawInContext() {
+        print("PenBrush  drawInContext()")
         let context = initContext()
         context?.addPath(path)
         context?.strokePath()

@@ -11,10 +11,10 @@ import UIKit
 open class LineBrush: BaseBrush {
 
     internal override func drawInContext() {
-        print("drawInContext()")
+        print("LineBrush drawInContext()")
         let context = initContext()
         context?.addLines(between: [beginPoint!, currentPoint!])
-        print("Begin  point   ", beginPoint!, currentPoint!)
+       // print("Begin  point   ", beginPoint!, currentPoint!)
         context?.strokePath()
     }
     

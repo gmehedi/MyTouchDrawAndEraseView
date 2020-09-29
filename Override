@@ -1,0 +1,93 @@
+
+//extension TouchDrawView {
+//
+//    // MARK: - UITouches
+//    override open func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
+////        print("touchesBegan")
+////        guard let allTouches = event?.allTouches else { return }
+////        if allTouches.count > 1 { return }
+////        brush = initBrushType()
+////        drawingView.brush = brush
+////        drawingView.type = self.brushType
+////
+////        brush?.beginPoint = touches.first?.location(in: self)
+////        brush?.currentPoint = touches.first?.location(in: self)
+////        brush?.previousPoint1 =  touches.first?.previousLocation(in: self)
+////        brush?.lineColor = lineColor
+////        brush?.lineAlpha = lineAlpha
+////        brush?.lineWidth = lineWidth
+////        brush?.points.append(touches.first!.location(in: self))
+////
+////        if self.brushType == .line {
+////            //self.drawingView.isUserInteractionEnabled = false
+////        }
+//    }
+//
+//    override open func touchesMoved(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        print("touches now Moved")
+//        //        guard let allTouches = event?.allTouches else { return }
+//        //        if allTouches.count > 1 { return }
+//        //
+//        //        if let brush = self.brush {
+//        //            brush.previousPoint2 = brush.previousPoint1
+//        //            brush.previousPoint1 = touches.first?.previousLocation(in: self)
+//        //            brush.currentPoint = touches.first?.location(in: self)
+//        //            brush.points.append(touches.first!.location(in: self))
+//        //
+//        //            if let penBrush = brush as? PenBrush {
+//        //                var drawBox = penBrush.addPathInBound()
+//        //                drawBox.origin.x -= lineWidth * 1
+//        //                drawBox.origin.y -= lineWidth * 1
+//        //                drawBox.size.width += lineWidth * 2
+//        //                drawBox.size.height += lineWidth * 2
+//        //                self.drawingView.setNeedsDisplay(drawBox)
+//        //
+//        //            } else {
+//        //                self.drawingView.setNeedsDisplay()
+//        //            }
+//        //        }
+//    }
+//
+//    override open func touchesEnded(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        //        print("Touch End")
+//        //        if let brush = self.brush, brush.points.count >= 2 {
+//        //            brushStack.append(brush)
+//        //            drawUndoManager.registerUndo(withTarget: self, selector: #selector(popBrushStack), object: nil)
+//        //            delegate?.undoEnable(drawUndoManager.canUndo)
+//        //            delegate?.redoEnable(drawUndoManager.canRedo)
+//        //            let len = brushStack.count
+//        //            if self.brushType == .line && len > 0 {
+//        //                print("B11  ", brushStack.count)
+//        //                let top = brushStack[len - 1]
+//        //                let dist = distance(a: top.beginPoint!, b: top.currentPoint!)
+//        //
+//        //                let angleR = atan2((top.currentPoint!.y - top.beginPoint!.y),(top.currentPoint!.x - top.beginPoint!.x))
+//        //
+//        ////                var angleD = CGFloat((angleR * 180.0) / .pi)
+//        ////                print("Angle First   ", angleR, "   ", angleD)
+//        ////                if top.beginPoint!.x > top.currentPoint!.x {
+//        ////                    angleD += CGFloat(180.0)
+//        ////                }
+//        ////                angleD = CGFloat(angleD * .pi / 180.0)
+//        //
+//        ////                let lineView = UIView(frame: CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(10.0), height: top.lineWidth  + CGFloat(10.0)))
+//        ////                lineView.backgroundColor = UIColor.black
+//        //                let frame = CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(10.0), height: top.lineWidth  + CGFloat(40.0))
+//        //                brushStack.popLast()
+//        //
+//        //                if dist > 20{
+//        //                    //MARK: add Line OverView
+//        //                    self.delegate?.addLine(frame: frame, angle: angleR)
+//        //                }
+//        ////                setAnchorPoint(point: CGPoint(x: 0, y: 0.5), lineView: lineView)
+//        ////                lineView.transform = CGAffineTransform(rotationAngle: angleR)
+//        //            }
+//        //            touchesMoved(touches, with: event)
+//        //            finishDrawing()
+//        //        }
+//    }
+//
+//    override open func touchesCancelled(_ touches: Set<UITouch>, with event: UIEvent?) {
+//        print("touchesCancelled")
+//        touchesEnded(touches, with: event)
+//    }

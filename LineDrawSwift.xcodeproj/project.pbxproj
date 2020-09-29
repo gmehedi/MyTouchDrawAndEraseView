@@ -14,7 +14,6 @@
 		5238F582251B3CD600372336 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 5238F580251B3CD600372336 /* LaunchScreen.storyboard */; };
 		5238F58D251B3CD600372336 /* LineDrawSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5238F58C251B3CD600372336 /* LineDrawSwiftTests.swift */; };
 		5238F598251B3CD600372336 /* LineDrawSwiftUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5238F597251B3CD600372336 /* LineDrawSwiftUITests.swift */; };
-		524377D52521DE7B00A4381A /* TemporaryDraw.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524377D42521DE7B00A4381A /* TemporaryDraw.swift */; };
 		524377D725220F3200A4381A /* Extension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524377D625220F3100A4381A /* Extension.swift */; };
 		524377D925220F4300A4381A /* OverlayLineView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 524377D825220F4300A4381A /* OverlayLineView.swift */; };
 		524377DB2522163600A4381A /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 524377DA2522163600A4381A /* Assets.xcassets */; };
@@ -58,7 +57,6 @@
 		5238F593251B3CD600372336 /* LineDrawSwiftUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = LineDrawSwiftUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		5238F597251B3CD600372336 /* LineDrawSwiftUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LineDrawSwiftUITests.swift; sourceTree = "<group>"; };
 		5238F599251B3CD600372336 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		524377D42521DE7B00A4381A /* TemporaryDraw.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TemporaryDraw.swift; sourceTree = "<group>"; };
 		524377D625220F3100A4381A /* Extension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Extension.swift; sourceTree = "<group>"; };
 		524377D825220F4300A4381A /* OverlayLineView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = OverlayLineView.swift; sourceTree = "<group>"; };
 		524377DA2522163600A4381A /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
@@ -160,7 +158,6 @@
 				5244BCE8251C6FF800DDB077 /* LineBrush.swift */,
 				5244BCEC251C701900DDB077 /* RectBrush.swift */,
 				5244BCEE251C701E00DDB077 /* TouchDrawView.swift */,
-				524377D42521DE7B00A4381A /* TemporaryDraw.swift */,
 			);
 			path = "Drawing View";
 			sourceTree = "<group>";
@@ -314,7 +311,6 @@
 				5244BCE9251C6FF800DDB077 /* LineBrush.swift in Sources */,
 				5238F578251B3CD200372336 /* SceneDelegate.swift in Sources */,
 				5244BCE3251C6FCB00DDB077 /* BaseBrush.swift in Sources */,
-				524377D52521DE7B00A4381A /* TemporaryDraw.swift in Sources */,
 				5244BCEB251C700800DDB077 /* PenBrush.swift in Sources */,
 				5244BCEF251C701E00DDB077 /* TouchDrawView.swift in Sources */,
 				5244BCE5251C6FE500DDB077 /* EllipseBrush.swift in Sources */,

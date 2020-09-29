@@ -11,7 +11,7 @@ import UIKit
 open class EraserBrush: PenBrush {
     
     override func drawInContext() {
-        print("drawInContext()")
+        print("EraserBrush drawInContext()")
         let context = initContext()
         context?.setBlendMode(.clear)
         context?.addPath(path)

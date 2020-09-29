@@ -8,18 +8,6 @@
 
 import UIKit
 
-class OverlayLineView: NSObject {
-
-}
-
-//  StickerView.swift
-//  StickerView
-//
-//  Copyright © All rights reserved.
-//
-
-import UIKit
-
 public enum StickerViewHandler:Int {
     case close
     case rotate
@@ -52,20 +40,44 @@ public enum StickerViewPosition:Int {
 }
 
 @objc public  protocol StickerViewDelegate {
-    @objc func stickerViewDidBeginMoving(_ stickerView: StickerView)
-    @objc func stickerViewDidChangeMoving(_ stickerView: StickerView)
-    @objc func stickerViewDidEndMoving(_ stickerView: StickerView)
-    @objc func stickerViewDidBeginRotating(_ stickerView: StickerView)
-    @objc func stickerViewDidChangeRotating(_ stickerView: StickerView)
-    @objc func stickerViewDidEndRotating(_ stickerView: StickerView)
-    @objc func stickerViewDidClose(_ stickerView: StickerView)
-    @objc func stickerViewDidTap(_ stickerView: StickerView)
+    @objc func overlayViewDidBeginMoving(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidChangeMoving(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidEndMoving(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidBeginRotating(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidChangeRotating(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidEndRotating(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidClose(_ stickerView: OverlayLineView)
+    @objc func overlayViewDidTap(_ stickerView: OverlayLineView)
 }
 
-public class StickerView: UIView {
+public class OverlayLineView: UIView {
+    
     public var delegate: StickerViewDelegate!
     /// The contentView inside the sticker view.
     public var contentView:UIView!
+    
+    //Draw Line On OverLayView
+    var image: UIImage?
+    var brush: BaseBrush?
+    var type: BrushType!
+    
+    public override func draw(_ rect: CGRect) {
+        print("draw(_ rect: CGRect) OverLay")
+        brush = LineBrush()
+        brush?.beginPoint = CGPoint(x: 0, y: 25)
+        brush?.currentPoint = CGPoint(x: self.bounds.size.width, y: 25)
+        brush?.lineWidth = 10
+        brush?.lineColor = UIColor.red
+        brush?.lineAlpha = 1
+        if self.type == .line{
+            image?.draw(in: bounds) // export drawing
+            brush?.drawInContext() // preview drawing
+        }else{
+            image?.draw(in: bounds) // export drawing
+            brush?.drawInContext() // preview drawing
+        }
+    }
+    
     /// Enable the close handler or not. Default value is YES.
     public var enableClose:Bool = true {
         didSet {
@@ -129,11 +141,9 @@ public class StickerView: UIView {
     public  init(contentView: UIView, origin: CGPoint) {
         self.defaultInset = 11
         self.defaultMinimumSize = 10
-        
-        var frame = contentView.frame
-       // frame = CGRect(x: origin.x, y: origin.y, width: frame.size.width + CGFloat(self.defaultInset) * 2, height: frame.size.height + CGFloat(self.defaultInset) * 2)
+        let frame = contentView.frame
         super.init(frame: frame)
-        self.backgroundColor = UIColor.lightGray.withAlphaComponent(0.2)
+        self.backgroundColor = UIColor.clear
         self.addGestureRecognizer(self.moveGesture)
         self.addGestureRecognizer(self.tapGesture)
         
@@ -165,7 +175,6 @@ public class StickerView: UIView {
     public  required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
     /**
      *  Use image to customize each editing handler.
      *  It is your responsibility to set image for every editing handler.
@@ -203,9 +212,9 @@ public class StickerView: UIView {
         switch handler {
         case .close:
             handlerView = self.closeImageView
-            print("Close")
+            print(".close")
         case .rotate:
-            print("RTRT")
+            print(".rotate")
             handlerView = self.rotateImageView
         case .flip:
             handlerView = self.flipImageView
@@ -213,21 +222,21 @@ public class StickerView: UIView {
         
         switch position {
         case .topLeft:
-            print("G1")
+            print(".topLeft")
             handlerView?.center = origin
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleBottomMargin]
         case .topRight:
-            print("RT!")
-            handlerView?.center = CGPoint(x: origin.x, y: origin.y + 30.0)
+            print(".topRight")
+            handlerView?.center = CGPoint(x: origin.x, y: origin.y + (size.height * 0.5))
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
 //            handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y)
 //            handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
         case .bottomLeft:
-            print("CL1")
+            print(".bottomLeft")
             handlerView?.center = CGPoint(x: origin.x, y: origin.y + size.height)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomRight:
-            print("CL2")
+            print(".bottomRight")
             handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y + (size.height * 0.5))
             handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin]
         }
@@ -240,6 +249,7 @@ public class StickerView: UIView {
      *
      *  @param size Handler's size
      */
+    
     public func setHandlerSize(_ size:Int) {
         if size <= 0 {
             return
@@ -252,20 +262,18 @@ public class StickerView: UIView {
         let originalCenter = self.center
         let originalTransform = self.transform
         var frame = self.contentView.frame
+        
         frame = CGRect(x: 0, y: 0, width: frame.size.width + CGFloat(self.defaultInset) * 2, height: frame.size.height + CGFloat(self.defaultInset) * 2)
-        
         self.contentView.removeFromSuperview()
-        
         self.transform = CGAffineTransform.identity
         self.frame = frame
-        
         self.contentView.center = CGRectGetCenter(self.bounds)
         self.addSubview(self.contentView)
         self.sendSubviewToBack(self.contentView)
         
         let handlerFrame = CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2)
         self.closeImageView.frame = handlerFrame
-        print("TAG    ", self.closeImageView.tag,"    ", self.rotateImageView.tag)
+     //   print("TAG    ", self.closeImageView.tag,"    ", self.rotateImageView.tag)
         self.setPosition(StickerViewPosition(rawValue: self.closeImageView.tag)!, forHandler: .close)
         self.rotateImageView.frame = handlerFrame
         self.setPosition(StickerViewPosition(rawValue: self.rotateImageView.tag)!, forHandler: .rotate)
@@ -299,9 +307,9 @@ public class StickerView: UIView {
         return UIPanGestureRecognizer(target: self, action: #selector(handleMoveGesture(_:)))
     }()
     public lazy var rotateImageView:UIImageView = {
-        let rotateImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 3, height: self.defaultInset * 3))
+        let rotateImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4)) // self.defaultInset == 11
         rotateImageView.contentMode = UIView.ContentMode.scaleAspectFit
-        rotateImageView.backgroundColor = UIColor.clear
+        rotateImageView.backgroundColor = UIColor.gray.withAlphaComponent(0.3)
         rotateImageView.isUserInteractionEnabled = true
         rotateImageView.addGestureRecognizer(self.rotateGesture)
         //print("Need to update")
@@ -312,9 +320,9 @@ public class StickerView: UIView {
         return UIPanGestureRecognizer(target: self, action: #selector(handleRotateGesture(_:)))
     }()
     private lazy var closeImageView:UIImageView = {
-        let closeImageview = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2))
+        let closeImageview = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4))
         closeImageview.contentMode = UIView.ContentMode.scaleAspectFit
-        closeImageview.backgroundColor = UIColor.clear
+        closeImageview.backgroundColor = UIColor.red.withAlphaComponent(0.3)
         closeImageview.isUserInteractionEnabled = true
         closeImageview.addGestureRecognizer(self.closeGesture)
         return closeImageview
@@ -333,7 +341,8 @@ public class StickerView: UIView {
     private lazy var flipGesture = {
         return UITapGestureRecognizer(target: self, action: #selector(handleFlipGesture(_:)))
     }()
-    private lazy var tapGesture = {
+    private lazy var tapGesture = { () -> UITapGestureRecognizer in
+        print("Tapped On Overlay")
         return UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
     }()
     // MARK: - Gesture Handlers
@@ -345,17 +354,17 @@ public class StickerView: UIView {
             self.beginningPoint = touchLocation
             self.beginningCenter = self.center
             if let delegate = self.delegate {
-                delegate.stickerViewDidBeginMoving(self)
+                delegate.overlayViewDidBeginMoving(self)
             }
         case .changed:
             self.center = CGPoint(x: self.beginningCenter.x + (touchLocation.x - self.beginningPoint.x), y: self.beginningCenter.y + (touchLocation.y - self.beginningPoint.y))
             if let delegate = self.delegate {
-                delegate.stickerViewDidChangeMoving(self)
+                delegate.overlayViewDidChangeMoving(self)
             }
         case .ended:
             self.center = CGPoint(x: self.beginningCenter.x + (touchLocation.x - self.beginningPoint.x), y: self.beginningCenter.y + (touchLocation.y - self.beginningPoint.y))
             if let delegate = self.delegate {
-                delegate.stickerViewDidEndMoving(self)
+                delegate.overlayViewDidEndMoving(self)
             }
         default:
             break
@@ -373,7 +382,7 @@ public class StickerView: UIView {
             self.initialBounds = self.bounds
             self.initialDistance = CGPointGetDistance(point1: center, point2: touchLocation)
             if let delegate = self.delegate {
-                delegate.stickerViewDidBeginRotating(self)
+                delegate.overlayViewDidBeginRotating(self)
             }
         case .changed:
             let angle = atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))
@@ -388,11 +397,11 @@ public class StickerView: UIView {
             self.setNeedsDisplay()
             
             if let delegate = self.delegate {
-                delegate.stickerViewDidChangeRotating(self)
+                delegate.overlayViewDidChangeRotating(self)
             }
         case .ended:
             if let delegate = self.delegate {
-                delegate.stickerViewDidEndRotating(self)
+                delegate.overlayViewDidEndRotating(self)
             }
         default:
             break
@@ -402,7 +411,7 @@ public class StickerView: UIView {
     @objc
     func handleCloseGesture(_ recognizer: UITapGestureRecognizer) {
         if let delegate = self.delegate {
-            delegate.stickerViewDidClose(self)
+            delegate.overlayViewDidClose(self)
         }
         self.removeFromSuperview()
     }
@@ -416,8 +425,9 @@ public class StickerView: UIView {
     
     @objc
     func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
+        print("Tapped Found on Overlay")
         if let delegate = self.delegate {
-            delegate.stickerViewDidTap(self)
+            delegate.overlayViewDidTap(self)
         }
     }
     
@@ -438,12 +448,12 @@ public class StickerView: UIView {
     }
 }
 
-extension StickerView: UIGestureRecognizerDelegate {
+extension OverlayLineView: UIGestureRecognizerDelegate {
     public func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
         return true
     }
 }
-extension StickerView{
+extension OverlayLineView{
     public func setAnchorPoint( point: CGPoint) {
           var newPoint = CGPoint(x: bounds.size.width * point.x, y: bounds.size.height * point.y)
           var oldPoint = CGPoint(x: bounds.size.width * layer.anchorPoint.x, y: bounds.size.height * layer.anchorPoint.y);

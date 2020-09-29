@@ -14,45 +14,46 @@ import UIKit
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawViewDelegate{
     
-    @IBOutlet weak var drawingView: TouchDrawView!
+    @IBOutlet weak var drawingContainerView: TouchDrawView!
     var lineView: UIView!
-    
+    var drawingView = DrawingView()
     override func viewDidLoad() {
         super.viewDidLoad()
-        drawingView.delegate = self
-        drawingView.lineWidth = 10
+        drawingContainerView.delegate = self
+        drawingContainerView.lineWidth = 10
         
     }
     
     @IBAction func tappedOnDrawButton(_ sender: UIButton) {
-        drawingView.brushType = BrushType.pen
+        drawingContainerView.brushType = BrushType.pen
         print("Draw")
     }
     
     @IBAction func tappedOnEraseButton(_ sender: UIButton) {
-         drawingView.brushType = BrushType.eraser
+         drawingContainerView.brushType = BrushType.eraser
         print("Eraser")
     }
     
     @IBAction func tappedOnLine(_ sender: UIButton) {
-        drawingView.brushType = BrushType.line
+        drawingContainerView.brushType = BrushType.line
     }
     
     @IBAction func tappedOnRect(_ sender: Any) {
-        drawingView.brushType = BrushType.rect
+        drawingContainerView.brushType = BrushType.rect
     }
     
     @IBAction func tappedOnEllips(_ sender: UIButton) {
-        drawingView.brushType = BrushType.ellipse
+        drawingContainerView.brushType = BrushType.ellipse
     }
     
     @IBAction func tappedOnUndo(_ sender: UIButton) {
-        drawingView.undo()
+       // drawingContainerView.undo()
     }
     
     @IBAction func tappedOnRedo(_ sender: UIButton) {
-        drawingView.redo()
+        drawingContainerView.redo()
     }
+    
 }
 
 extension ViewController{
@@ -60,53 +61,56 @@ extension ViewController{
         
         self.lineView = UIView(frame: frame) //CGRect(x: 0, y: 0, width: 100, height: 60)
         self.lineView.backgroundColor = UIColor.clear
-        let stickerView = StickerView.init(contentView: self.lineView, origin: frame.origin)
-        stickerView.showEditingHandlers = true
-        stickerView.delegate = self
-        stickerView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
-        stickerView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
+        let overlayView = OverlayLineView.init(contentView: self.lineView, origin: frame.origin)
+        overlayView.showEditingHandlers = true
+        overlayView.delegate = self
+        overlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
+        overlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
         //  stickerView.setImage(UIImage.init(named: "Flip")!, forHandler: StickerViewHandler.flip)
-        stickerView.showEditingHandlers = true
-        stickerView.tag = 999
-        stickerView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
-        stickerView.transform = CGAffineTransform(rotationAngle: angle)
-        self.drawingView.addSubview(stickerView)
+        overlayView.showEditingHandlers = true
+        overlayView.tag = 999
+        overlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+        overlayView.transform = CGAffineTransform(rotationAngle: angle)
+      //  print("IIII  ", (stickerView.brush?.beginPoint!.x)! - frame.size.width)
+      //  stickerView.brush?.currentPoint!.x = (stickerView.brush?.beginPoint!.x)! + frame.size.width
+        overlayView.brush?.drawInContext()
+        self.drawingContainerView.addSubview(overlayView)
     }
-    func addLine(frame: CGRect, angle: CGFloat) {
-        self.takeOverLayLineView(frame: frame, angle: angle)
-    }
-    
 }
 extension ViewController: StickerViewDelegate{
-    func stickerViewDidBeginMoving(_ stickerView: StickerView) {
+    func overlayViewDidBeginMoving(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidChangeMoving(_ stickerView: StickerView) {
+    func overlayViewDidChangeMoving(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidEndMoving(_ stickerView: StickerView) {
+    func overlayViewDidEndMoving(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidBeginRotating(_ stickerView: StickerView) {
+    func overlayViewDidBeginRotating(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidChangeRotating(_ stickerView: StickerView) {
+    func overlayViewDidChangeRotating(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidEndRotating(_ stickerView: StickerView) {
+    func overlayViewDidEndRotating(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidClose(_ stickerView: StickerView) {
+    func overlayViewDidClose(_ stickerView: OverlayLineView) {
         print("")
     }
     
-    func stickerViewDidTap(_ stickerView: StickerView) {
+    func overlayViewDidTap(_ stickerView: OverlayLineView) {
         print("")
+    }
+    
+    func addLine(frame: CGRect, angle: CGFloat) {
+        self.takeOverLayLineView(frame: frame, angle: angle)
     }
 }
