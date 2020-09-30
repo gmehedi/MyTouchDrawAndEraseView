@@ -9,7 +9,12 @@
 import UIKit
 
 open class PenBrush: BaseBrush {
-
+    
+    public override init() {
+        super.init()
+        type = .pen
+    }
+    
     internal func addPathInBound() -> CGRect {
         print("addPathInBound()")
         let mid1 = midPoint(p1: previousPoint1!, p2: previousPoint2!)
@@ -23,7 +28,7 @@ open class PenBrush: BaseBrush {
     
     internal override func drawInContext() {
         print("PenBrush  drawInContext()")
-        let context = initContext()
+        let context = initContext(type: .pen)
         context?.addPath(path)
         context?.strokePath()
     }

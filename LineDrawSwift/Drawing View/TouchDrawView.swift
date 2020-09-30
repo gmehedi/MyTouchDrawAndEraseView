@@ -186,25 +186,15 @@ extension TouchDrawView {
     
     // MARK: - Draw
     fileprivate func finishDrawing() {
-        print("finishDrawing(),  ", brushType)
+        
         UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
         prevImage?.draw(in: self.bounds)
-        if brushType == .line{
-            print("Erase")
-            //MARK: Temporary Drawing erase
-            brush = nil
-            drawingView.brush = nil
-            self.drawingView.setNeedsDisplay()
-            return
-        }else{
-            //MARK: Render Drawing erase
-            brush?.drawInContext()
-            prevImage = UIGraphicsGetImageFromCurrentImageContext()
-            drawingView.image = prevImage
-            UIGraphicsEndImageContext()
-            brush = nil
-            drawingView.brush = nil
-        }
+        brush?.drawInContext()
+        prevImage = UIGraphicsGetImageFromCurrentImageContext()
+        drawingView.image = prevImage
+        UIGraphicsEndImageContext()
+        brush = nil
+        drawingView.brush = nil
     }
     
     /// Begins the image context
@@ -222,7 +212,7 @@ extension TouchDrawView {
     
     // Redraw image for undo action
     func redrawInContext() {
-        print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRedrawInContext()")
+        print("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRedrawInContext()", brushStack.count)
         beginImageContext()
         for brush in brushStack {
             brush.drawInContext()
@@ -310,9 +300,8 @@ extension TouchDrawView{
 //            guard let allTouches = event?.allTouches else { return }
 //            if allTouches.count > 1 { return }
             brush = initBrushType()
-           
             drawingView.brush = brush
-            drawingView.type = self.brushType
+            drawingView.type = brush!.type//self.brushType
             
             brush?.beginPoint = touchLocation//touches.first?.location(in: self)
             brush?.currentPoint = touchLocation//touches.first?.location(in: self)
@@ -321,7 +310,7 @@ extension TouchDrawView{
             brush?.lineAlpha = lineAlpha
             brush?.lineWidth = lineWidth
             brush?.points.append(touchLocation)
-            if self.brushType == .line {
+            if brush!.type == .line {
                // self.drawingView.isUserInteractionEnabled = false
             }
         case .changed:
@@ -359,7 +348,7 @@ extension TouchDrawView{
 //                delegate?.undoEnable(drawUndoManager.canUndo)
 //                delegate?.redoEnable(drawUndoManager.canRedo)
                 let len = brushStack.count
-                if self.brushType == .line && len > 0 {
+                if  len > 0 &&  (brushStack[len - 1].type == .line){
                     print("B11  ", brushStack.count)
                     let top = brushStack[len - 1]
                   //  brushStack.remove(at: len - 1)
@@ -379,7 +368,8 @@ extension TouchDrawView{
                     let frame = CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(10.0), height: top.lineWidth  + CGFloat(40.0))
                     if dist > 20{
                         //MARK: add Line OverView
-                        self.delegate?.addLine(frame: frame, angle: angleR)
+        
+                       // self.delegate?.addLine(frame: frame, angle: angleR)
                     }
                     //setAnchorPoint(point: CGPoint(x: 0, y: 0.5), lineView: lineView)
                     //lineView.transform = CGAffineTransform(rotationAngle: angleR)

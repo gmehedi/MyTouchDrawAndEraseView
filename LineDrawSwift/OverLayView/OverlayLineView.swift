@@ -157,11 +157,11 @@ public class OverlayLineView: UIView {
         
         // Setup editing handlers
         self.setPosition(.topRight, forHandler: .close)
-        self.addSubview(self.closeImageView)
+        self.addSubview(self.closeLineButton)
         self.setPosition(.bottomRight, forHandler: .rotate)
-        self.addSubview(self.rotateImageView)
+        self.addSubview(self.rotateLineButton)
         self.setPosition(.topLeft, forHandler: .flip)
-        self.addSubview(self.flipImageView)
+        //self.addSubview(self.flipLineButton)
         
         self.showEditingHandlers = true
         self.enableClose = true
@@ -186,11 +186,13 @@ public class OverlayLineView: UIView {
         print("setImage")
         switch handler {
         case .close:
-            self.closeImageView.image = image
+//self.closeImageView.image = image
+            self.closeLineButton.setImage(UIImage(named: "Close"), for: .normal)
         case .rotate:
-            self.rotateImageView.image = image
+            self.rotateLineButton.setImage(UIImage(named: "Rotate"), for: .normal)
         case .flip:
-            self.flipImageView.image = image
+            print("Flip Off")
+           // self.flipImageView.setImage(UIImage(named: "Flip"), for: .normal)
         }
     }
     
@@ -207,17 +209,18 @@ public class OverlayLineView: UIView {
         let origin = self.contentView.frame.origin
         let size = self.contentView.frame.size
         
-        var handlerView:UIImageView?
+        var handlerView: UIButton?
         print("Set Image Now")
         switch handler {
         case .close:
-            handlerView = self.closeImageView
+            handlerView = self.closeLineButton
             print(".close")
         case .rotate:
             print(".rotate")
-            handlerView = self.rotateImageView
+            handlerView = self.rotateLineButton
         case .flip:
-            handlerView = self.flipImageView
+            print("Flip off")
+           // handlerView = self.flipImageView
         }
         
         switch position {
@@ -272,13 +275,13 @@ public class OverlayLineView: UIView {
         self.sendSubviewToBack(self.contentView)
         
         let handlerFrame = CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2)
-        self.closeImageView.frame = handlerFrame
+        self.closeLineButton.frame = handlerFrame
      //   print("TAG    ", self.closeImageView.tag,"    ", self.rotateImageView.tag)
-        self.setPosition(StickerViewPosition(rawValue: self.closeImageView.tag)!, forHandler: .close)
-        self.rotateImageView.frame = handlerFrame
-        self.setPosition(StickerViewPosition(rawValue: self.rotateImageView.tag)!, forHandler: .rotate)
-        self.flipImageView.frame = handlerFrame
-        self.setPosition(StickerViewPosition(rawValue: self.flipImageView.tag)!, forHandler: .flip)
+        self.setPosition(StickerViewPosition(rawValue: self.closeLineButton.tag)!, forHandler: .close)
+        self.rotateLineButton.frame = handlerFrame
+        self.setPosition(StickerViewPosition(rawValue: self.rotateLineButton.tag)!, forHandler: .rotate)
+        self.flipLineButton.frame = handlerFrame
+        self.setPosition(StickerViewPosition(rawValue: self.flipLineButton.tag)!, forHandler: .flip)
         
         self.center = originalCenter
         self.transform = originalTransform
@@ -306,37 +309,37 @@ public class OverlayLineView: UIView {
     public lazy var moveGesture = {
         return UIPanGestureRecognizer(target: self, action: #selector(handleMoveGesture(_:)))
     }()
-    public lazy var rotateImageView:UIImageView = {
-        let rotateImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4)) // self.defaultInset == 11
-        rotateImageView.contentMode = UIView.ContentMode.scaleAspectFit
-        rotateImageView.backgroundColor = UIColor.gray.withAlphaComponent(0.3)
-        rotateImageView.isUserInteractionEnabled = true
-        rotateImageView.addGestureRecognizer(self.rotateGesture)
+    public lazy var rotateLineButton:UIButton = {
+        let rotateButton = UIButton(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4)) // self.defaultInset == 11
+        rotateButton.contentMode = .center
+        rotateButton.backgroundColor = UIColor.gray
+        rotateButton.isUserInteractionEnabled = true
+        rotateButton.addGestureRecognizer(self.rotateGesture)
         //print("Need to update")
         
-        return rotateImageView
+        return rotateButton
     }()
     private lazy var rotateGesture = {
         return UIPanGestureRecognizer(target: self, action: #selector(handleRotateGesture(_:)))
     }()
-    private lazy var closeImageView:UIImageView = {
-        let closeImageview = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4))
-        closeImageview.contentMode = UIView.ContentMode.scaleAspectFit
-        closeImageview.backgroundColor = UIColor.red.withAlphaComponent(0.3)
-        closeImageview.isUserInteractionEnabled = true
-        closeImageview.addGestureRecognizer(self.closeGesture)
-        return closeImageview
+    private lazy var closeLineButton: UIButton = {
+        let closeButton = UIButton(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 4, height: self.defaultInset * 4))
+        closeButton.contentMode = UIView.ContentMode.center
+        closeButton.backgroundColor = UIColor.red
+        closeButton.isUserInteractionEnabled = true
+        closeButton.addGestureRecognizer(self.closeGesture)
+        return closeButton
     }()
     private lazy var closeGesture = {
         return UITapGestureRecognizer(target: self, action: #selector(handleCloseGesture(_:)))
     }()
-    private lazy var flipImageView:UIImageView = {
-        let flipImageView = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2))
-        flipImageView.contentMode = UIView.ContentMode.scaleAspectFit
-        flipImageView.backgroundColor = UIColor.clear
-        flipImageView.isUserInteractionEnabled = true
-        flipImageView.addGestureRecognizer(self.flipGesture)
-        return flipImageView
+    private lazy var flipLineButton:UIImageView = {
+        let flipButton = UIImageView(frame: CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2))
+        flipButton.contentMode = UIView.ContentMode.scaleAspectFit
+        flipButton.backgroundColor = UIColor.clear
+        flipButton.isUserInteractionEnabled = true
+        flipButton.addGestureRecognizer(self.flipGesture)
+        return flipButton
     }()
     private lazy var flipGesture = {
         return UITapGestureRecognizer(target: self, action: #selector(handleFlipGesture(_:)))
@@ -373,6 +376,7 @@ public class OverlayLineView: UIView {
     
     @objc
     func handleRotateGesture(_ recognizer: UIPanGestureRecognizer) {
+        print("Scale Pan Gesture or Rotate Gesture")
         let touchLocation = recognizer.location(in: self.superview)
         let center = self.center
         
@@ -410,6 +414,7 @@ public class OverlayLineView: UIView {
     
     @objc
     func handleCloseGesture(_ recognizer: UITapGestureRecognizer) {
+        print("Handle Close Button")
         if let delegate = self.delegate {
             delegate.overlayViewDidClose(self)
         }
@@ -418,6 +423,7 @@ public class OverlayLineView: UIView {
     
     @objc
     func handleFlipGesture(_ recognizer: UITapGestureRecognizer) {
+        print("Flipped")
         UIView.animate(withDuration: 0.3) {
             self.contentView.transform = self.contentView.transform.scaledBy(x: -1, y: 1)
         }
@@ -433,18 +439,18 @@ public class OverlayLineView: UIView {
     
     // MARK: - Private Methods
     private func setEnableClose(_ enableClose:Bool) {
-        self.closeImageView.isHidden = !enableClose
-        self.closeImageView.isUserInteractionEnabled = enableClose
+        self.closeLineButton.isHidden = !enableClose
+        self.closeLineButton.isUserInteractionEnabled = enableClose
     }
     
     private func setEnableRotate(_ enableRotate:Bool) {
-        self.rotateImageView.isHidden = !enableRotate
-        self.rotateImageView.isUserInteractionEnabled = enableRotate
+        self.rotateLineButton.isHidden = !enableRotate
+        self.rotateLineButton.isUserInteractionEnabled = enableRotate
     }
     
     private func setEnableFlip(_ enableFlip:Bool) {
-        self.flipImageView.isHidden = !enableFlip
-        self.flipImageView.isUserInteractionEnabled = enableFlip
+        self.flipLineButton.isHidden = !enableFlip
+        self.flipLineButton.isUserInteractionEnabled = enableFlip
     }
 }
 

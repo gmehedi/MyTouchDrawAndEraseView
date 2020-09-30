@@ -28,12 +28,14 @@ open class BaseBrush: NSObject {
     var lineColor: UIColor!
     var lineAlpha: CGFloat!
     var path = CGMutablePath()
-
+    var type: BrushType!
+    
     func drawInContext() {
         assert(false, "implements in subclass.")
     }
     
-    internal func initContext() -> CGContext? {
+    internal func initContext(type: BrushType) -> CGContext? {
+        self.type = type
         print("InitContext in BaseBrush")
         let context = UIGraphicsGetCurrentContext()
         context?.setLineCap(.round)

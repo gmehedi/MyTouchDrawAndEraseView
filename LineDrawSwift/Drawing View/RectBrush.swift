@@ -10,9 +10,14 @@ import UIKit
 
 open class RectBrush: BaseBrush {
     
+    public override init() {
+        super.init()
+        type = .rect
+    }
+    
     internal override func drawInContext() {
         print("RectBrush rawInContext() ")
-        let context = initContext()
+        let context = initContext(type: .rect)
         context?.addRect(CGRect(origin: CGPoint(x: min(beginPoint!.x, currentPoint!.x), y: min(beginPoint!.y, currentPoint!.y)),
                                 size: CGSize(width: abs(currentPoint!.x - beginPoint!.x), height: abs(currentPoint!.y - beginPoint!.y))))
         context?.strokePath()

@@ -17,6 +17,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawVi
     @IBOutlet weak var drawingContainerView: TouchDrawView!
     var lineView: UIView!
     var drawingView = DrawingView()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         drawingContainerView.delegate = self
@@ -47,7 +48,7 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawVi
     }
     
     @IBAction func tappedOnUndo(_ sender: UIButton) {
-       // drawingContainerView.undo()
+        drawingContainerView.undo()
     }
     
     @IBAction func tappedOnRedo(_ sender: UIButton) {
