@@ -56,62 +56,41 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawVi
     }
     
 }
-
-extension ViewController{
-    func takeOverLayLineView(frame: CGRect, angle: CGFloat){
-        
-        self.lineView = UIView(frame: frame) //CGRect(x: 0, y: 0, width: 100, height: 60)
-        self.lineView.backgroundColor = UIColor.clear
-        let overlayView = OverlayLineView.init(contentView: self.lineView, origin: frame.origin)
-        overlayView.showEditingHandlers = true
-        overlayView.delegate = self
-        overlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
-        overlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
-        //  stickerView.setImage(UIImage.init(named: "Flip")!, forHandler: StickerViewHandler.flip)
-        overlayView.showEditingHandlers = true
-        overlayView.tag = 999
-        overlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
-        overlayView.transform = CGAffineTransform(rotationAngle: angle)
-      //  print("IIII  ", (stickerView.brush?.beginPoint!.x)! - frame.size.width)
-      //  stickerView.brush?.currentPoint!.x = (stickerView.brush?.beginPoint!.x)! + frame.size.width
-        overlayView.brush?.drawInContext()
-        self.drawingContainerView.addSubview(overlayView)
+extension ViewController: OverlayViewViewDelegate{
+    
+    func overlayViewDidUpdatedInfo(frame: CGRect, angle: CGFloat) {
+        print("Update Active    ", frame,"     ", angle)
     }
-}
-extension ViewController: StickerViewDelegate{
+    
     func overlayViewDidBeginMoving(_ stickerView: OverlayLineView) {
-        print("")
+        print("Movi Ovelay")
     }
     
     func overlayViewDidChangeMoving(_ stickerView: OverlayLineView) {
-        print("")
+      // print("Chnage ")
     }
     
     func overlayViewDidEndMoving(_ stickerView: OverlayLineView) {
-        print("")
+       // print("")
     }
     
     func overlayViewDidBeginRotating(_ stickerView: OverlayLineView) {
-        print("")
+      //  print("")
     }
     
     func overlayViewDidChangeRotating(_ stickerView: OverlayLineView) {
-        print("")
+        //print("")
     }
     
     func overlayViewDidEndRotating(_ stickerView: OverlayLineView) {
-        print("")
+       // print("")
     }
     
     func overlayViewDidClose(_ stickerView: OverlayLineView) {
-        print("")
+       // print("")
     }
     
     func overlayViewDidTap(_ stickerView: OverlayLineView) {
-        print("")
-    }
-    
-    func addLine(frame: CGRect, angle: CGFloat) {
-        self.takeOverLayLineView(frame: frame, angle: angle)
+        //print("")
     }
 }

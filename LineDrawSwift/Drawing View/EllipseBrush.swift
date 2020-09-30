@@ -9,6 +9,7 @@
 import UIKit
 
 open class EllipseBrush: BaseBrush {
+    
     public override init() {
         super.init()
         type = .ellipse
@@ -21,4 +22,5 @@ open class EllipseBrush: BaseBrush {
                                        size: CGSize(width: abs(currentPoint!.x - beginPoint!.x), height: abs(currentPoint!.y - beginPoint!.y))))
         context?.strokePath()
     }
+    
 }
