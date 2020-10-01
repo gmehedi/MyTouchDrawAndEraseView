@@ -54,22 +54,17 @@ public enum StickerViewPosition:Int {
 public class OverlayLineView: UIView{
     
     public var delegate: OverlayViewViewDelegate!
-    /// The contentView inside the sticker view.
+    /// The contentView inside the Overlay view.
     public var contentView:UIView!
     
-    //Draw Line On OverLayView
+    ///Draw Line On OverLayView
     var image: UIImage?
     var brush: BaseBrush?
     var type: BrushType!
     
+    //MARK: Draw On OverlayView
+    
     public override func draw(_ rect: CGRect) {
-        print("draw(_ rect: CGRect) OverLay")
-        brush = LineBrush()
-        brush?.beginPoint = CGPoint(x: 0, y: 25)
-        brush?.currentPoint = CGPoint(x: self.bounds.size.width, y: 25)
-        brush?.lineWidth = 10
-        brush?.lineColor = UIColor.red
-        brush?.lineAlpha = 1
         if self.type == .line{
             image?.draw(in: bounds) // export drawing
             brush?.drawInContext() // preview drawing
@@ -147,6 +142,7 @@ public class OverlayLineView: UIView{
     public  var userInfo:Any?
     
     //MARK: Overlay View Initialize
+    
     public  init(contentView: UIView, origin: CGPoint) {
         self.defaultInset = 11 // button size 
         self.defaultMinimumSize = 10
@@ -156,7 +152,7 @@ public class OverlayLineView: UIView{
         self.addGestureRecognizer(self.moveGesture)
         self.addGestureRecognizer(self.tapGesture)
         
-        // Setup content view
+        /// Setup content view
         self.contentView = contentView
         self.contentView.center = CGRectGetCenter(self.bounds)
         self.contentView.isUserInteractionEnabled = false
@@ -164,13 +160,13 @@ public class OverlayLineView: UIView{
         self.contentView.layer.allowsEdgeAntialiasing = true
         self.addSubview(self.contentView)
         
-        // Setup editing handlers
+        /// Setup editing handlers
         self.setPosition(.topRight, forHandler: .close)
         self.addSubview(self.closeLineButton)
         self.setPosition(.bottomRight, forHandler: .rotate)
-       // self.addSubview(self.rotateLineButton)
+        /// self.addSubview(self.rotateLineButton)
         self.setPosition(.topLeft, forHandler: .flip)
-       // self.addSubview(self.flipLineButton)
+        /// self.addSubview(self.flipLineButton)
         
         self.showEditingHandlers = true
         self.enableClose = true
@@ -194,7 +190,7 @@ public class OverlayLineView: UIView{
      *  @param handler The editing handler.
      */
     public func setImage(_ image:UIImage, forHandler handler:StickerViewHandler) {
-        print("setImage")
+      ///  print("setImage")
         switch handler {
         case .close:
             self.closeLineButton.setImage(UIImage(named: "Close"), for: .normal)
@@ -203,8 +199,8 @@ public class OverlayLineView: UIView{
             self.rotateLineButton.setImage(UIImage(named: "Rotate"), for: .normal)
             self.addSubview(rotateLineButton)
         case .flip:
-            print("Flip Off")
-           // self.flipImageView.setImage(UIImage(named: "Flip"), for: .normal)
+           print("Flip Off")
+           /// self.flipImageView.setImage(UIImage(named: "Flip"), for: .normal)
         }
     }
     
@@ -222,7 +218,7 @@ public class OverlayLineView: UIView{
         let size = self.contentView.frame.size
         
         var handlerView: UIButton?
-        print("Set Image Now")
+        ///  print("Set Image Now")
         switch handler {
         case .close:
             handlerView = self.closeLineButton
@@ -232,26 +228,24 @@ public class OverlayLineView: UIView{
             handlerView = self.rotateLineButton
         case .flip:
             print("Flip off")
-           // handlerView = self.flipImageView
+            /// handlerView = self.flipImageView
         }
         
         switch position {
         case .topLeft:
-            print(".topLeft")
+          ///print(".topLeft")
             handlerView?.center = origin // scale button
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleBottomMargin]
         case .topRight:
-            print(".topRight") // cross button
+         ///   print(".topRight") // cross button
             handlerView?.center = CGPoint(x: origin.x, y: origin.y)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
-//            handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y)
-//            handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
         case .bottomLeft:
-            print(".bottomLeft")
+          ///print(".bottomLeft")
             handlerView?.center = CGPoint(x: origin.x, y: origin.y + size.height)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomRight:
-            print(".bottomRight")
+          ///print(".bottomRight")
             handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y + (size.height * 0.5))
             handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin]
         }
@@ -259,57 +253,8 @@ public class OverlayLineView: UIView{
         handlerView?.tag = position.rawValue
     }
     
-    /**
-     *  Customize handler's size
-     *
-     *  @param size Handler's size
-     */
-    
-//    public func setHandlerSize(_ size:Int) {
-//        if size <= 0 {
-//            return
-//        }
-//
-//        self.defaultInset = NSInteger(round(Float(size)  2))
-//        self.defaultMinimumSize = 4 * self.defaultInset
-//        self.minimumSize = max(self.minimumSize, self.defaultMinimumSize)
-//
-//        let originalCenter = self.center
-//        let originalTransform = self.transform
-//        var frame = self.contentView.frame
-//
-//        frame = CGRect(x: 0, y: 0, width: frame.size.width + CGFloat(self.defaultInset) * 2, height: frame.size.height + CGFloat(self.defaultInset) * 2)
-//        self.contentView.removeFromSuperview()
-//        self.transform = CGAffineTransform.identity
-//        self.frame = frame
-//        self.contentView.center = CGRectGetCenter(self.bounds)
-//        self.addSubview(self.contentView)
-//        self.sendSubviewToBack(self.contentView)
-//
-//        let handlerFrame = CGRect(x: 0, y: 0, width: self.defaultInset * 2, height: self.defaultInset * 2)
-//        self.closeLineButton.frame = handlerFrame
-//     //   print("TAG    ", self.closeImageView.tag,"    ", self.rotateImageView.tag)
-//        self.setPosition(StickerViewPosition(rawValue: self.closeLineButton.tag)!, forHandler: .close)
-//        self.rotateLineButton.frame = handlerFrame
-//        self.setPosition(StickerViewPosition(rawValue: self.rotateLineButton.tag)!, forHandler: .rotate)
-//        self.flipLineButton.frame = handlerFrame
-//        self.setPosition(StickerViewPosition(rawValue: self.flipLineButton.tag)!, forHandler: .flip)
-//
-//        self.center = originalCenter
-//        self.transform = originalTransform
-//    }
-    
-    /**
-     *  Default value
-     */
-    
     private var defaultInset:NSInteger
     private var defaultMinimumSize:NSInteger
-    
-    /**
-     *  Variables for moving viewes
-     */
-    
     public var beginningPoint = CGPoint.zero
     public var beginningCenter = CGPoint.zero
     
@@ -332,7 +277,7 @@ public class OverlayLineView: UIView{
         rotateButton.backgroundColor = UIColor.gray
         rotateButton.isUserInteractionEnabled = true
         rotateButton.addGestureRecognizer(self.rotateGesture)
-        //print("Need to update")
+        ///print("Need to update")
         
         return rotateButton
     }()
@@ -368,13 +313,13 @@ public class OverlayLineView: UIView{
     }()
     
     private lazy var tapGesture = { () -> UITapGestureRecognizer in
-        print("Tapped On Overlay")
+        /// print("Tapped On Overlay")
         return UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
     }()
     
-    // MARK: - Gesture Handlers
-    @objc
-    func handleMoveGesture(_ recognizer: UIPanGestureRecognizer) {
+    // MARK: Gesture Handlers
+    
+    @objc func handleMoveGesture(_ recognizer: UIPanGestureRecognizer) {
         let touchLocation = recognizer.location(in: self.superview)
         switch recognizer.state {
         case .began:
@@ -401,9 +346,8 @@ public class OverlayLineView: UIView{
         }
     }
     
-    @objc
-    func handleRotateGesture(_ recognizer: UIPanGestureRecognizer) {
-        print("Scale Pan Gesture or Rotate Gesture")
+    @objc func handleRotateGesture(_ recognizer: UIPanGestureRecognizer) {
+        /// print("Scale Pan Gesture or Rotate Gesture")
         let touchLocation = recognizer.location(in: self.superview)
         let center = self.center
         
@@ -429,6 +373,7 @@ public class OverlayLineView: UIView{
             self.setNeedsDisplay()
             
             if let delegate = self.delegate {
+                self.brush?.drawInContext()
                 delegate.overlayViewDidChangeRotating(self)
                 delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
@@ -442,32 +387,30 @@ public class OverlayLineView: UIView{
         }
     }
     
-    @objc
-    func handleCloseGesture(_ recognizer: UITapGestureRecognizer) {
-        print("Handle Close Button")
+    @objc func handleCloseGesture(_ recognizer: UITapGestureRecognizer) {
+        /// print("Handle Close Button")
         if let delegate = self.delegate {
             delegate.overlayViewDidClose(self)
         }
         self.removeFromSuperview()
     }
     
-    @objc
-    func handleFlipGesture(_ recognizer: UITapGestureRecognizer) {
-        print("Flipped")
+    @objc func handleFlipGesture(_ recognizer: UITapGestureRecognizer) {
+        /// print("Flipped")
         UIView.animate(withDuration: 0.3) {
             self.contentView.transform = self.contentView.transform.scaledBy(x: -1, y: 1)
         }
     }
     
-    @objc
-    func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
-        print("Tapped Found on Overlay")
+    @objc func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
+        /// print("Tapped Found on Overlay")
         if let delegate = self.delegate {
             delegate.overlayViewDidTap(self)
         }
     }
     
     // MARK: - Private Methods
+    
     private func setEnableClose(_ enableClose:Bool) {
         self.closeLineButton.isHidden = !enableClose
         self.closeLineButton.isUserInteractionEnabled = enableClose

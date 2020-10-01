@@ -16,10 +16,10 @@ open class LineBrush: BaseBrush {
     }
 
     internal override func drawInContext() {
-        print("LineBrush drawInContext()")
+        ///  print("LineBrush drawInContext()")
         let context = initContext(type: .line)
         context?.addLines(between: [beginPoint!, currentPoint!])
-       // print("Begin  point   ", beginPoint!, currentPoint!)
+        /// print("Begin  point   ", beginPoint!, currentPoint!)
         context?.strokePath()
     }
     

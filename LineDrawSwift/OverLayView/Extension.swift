@@ -9,18 +9,29 @@
 import UIKit
 
 //MARK: Overlay View Information Structure
+
 struct OverlayViewInfo {
     var view: OverlayLineView!
     var height: CGFloat!
     var width: CGFloat!
     var angle: CGFloat!
     var position: CGPoint!
+    
     init(view: OverlayLineView, width: CGFloat, height: CGFloat, angle: CGFloat, position: CGPoint) {
         self.view = view
         self.height = height
         self.width = width
         self.angle = angle
         self.position = position
+    }
+}
+
+struct Point {
+    var x: CGFloat = 0
+    var y: CGFloat = 0
+    init(x: CGFloat, y: CGFloat) {
+        self.x = x
+        self.y = y
     }
 }
 

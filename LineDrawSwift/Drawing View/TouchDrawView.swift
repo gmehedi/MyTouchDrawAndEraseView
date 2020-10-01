@@ -15,15 +15,7 @@ public protocol TouchDrawViewDelegate: class {
     
 }
 
-public extension TouchDrawViewDelegate {
-    
-    func undoEnable(_ isEnable: Bool) { }
-    func redoEnable(_ isEnable: Bool) { }
-    
-}
-
 open class TouchDrawView: UIView {
-    
     
     open weak var delegate: TouchDrawViewDelegate?
     var lineWidth: CGFloat = 10
@@ -41,14 +33,16 @@ open class TouchDrawView: UIView {
     fileprivate var drawingView = DrawingView()
     fileprivate var prevImage: UIImage?
     fileprivate var image: UIImage?
-    var activeOverlayView: OverlayViewInfo!
+    fileprivate var newOverlayView: OverlayLineView!
+    
+    var activeOverlayView: OverlayLineView!
     
     private lazy var scaleGesture = {
         return UIPanGestureRecognizer(target: self, action: #selector(handleScaleGesture(_:)))
     }()
     
     private lazy var tapGesture = { () -> UITapGestureRecognizer in
-        print("Tapped On Overlay")
+        ///   print("Tapped On Overlay")
         return UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
     }()
     
@@ -60,14 +54,14 @@ open class TouchDrawView: UIView {
         self.addGestureRecognizer(scaleGesture)
     }
     
-    // Sets the frames of the subviews
+    /// Sets the frames of the subviews
     override open func draw(_ rect: CGRect) {
-        print("TouchDrawView Draw Override")
+        ///   print("TouchDrawView Draw Override")
         image?.draw(in: bounds)
         drawingView.frame = self.bounds
     }
     
-    // MARK: - Public
+    /// MARK: - Public
     open func setBrushType(_ type: BrushType) {
         print("setBrushType(_ type: BrushType)    ", type)
         brushType = type
@@ -114,7 +108,7 @@ open class TouchDrawView: UIView {
         clearDraw()
     }
     
-    // Export drawn image
+    /// Export drawn image
     open func exportImage() -> UIImage? {
         print("exportImage()")
         beginImageContext()
@@ -123,9 +117,9 @@ open class TouchDrawView: UIView {
         return UIGraphicsGetImageFromCurrentImageContext()
     }
     
-    // MARK: - Private
+    /// MARK: - Private
     fileprivate func initBrushType() -> BaseBrush? {
-        print("initBrush()")
+        //  print("initBrush()")
         switch brushType {
         case .pen:
             return PenBrush()
@@ -141,12 +135,13 @@ open class TouchDrawView: UIView {
             return nil
         }
     }
+    
 }
 
 extension TouchDrawView{
     
     @objc fileprivate func popBrushStack() {
-        print("popBrushStack  ", brushStack.count)
+        ///print("popBrushStack  ", brushStack.count)
         if stackIndex > 0 {
             stackIndex -= 1
         }
@@ -158,7 +153,7 @@ extension TouchDrawView{
     }
     
     @objc fileprivate func pushBrushStack(_ brush: BaseBrush) {
-        print("pushBrushStack")
+        ///print("pushBrushStack")
         stackIndex += 1
         drawUndoManager.registerUndo(withTarget: self, selector: #selector(popBrushStack), object: nil)
         brushStack.append(brush)
@@ -170,6 +165,7 @@ extension TouchDrawView{
         let yDist = a.y - b.y
         return CGFloat(sqrt(xDist * xDist + yDist * yDist))
     }
+    
 }
 
 //MARK: Drawing View
@@ -180,7 +176,7 @@ class DrawingView: UIView {
     var type: BrushType!
     
     override func draw(_ rect: CGRect) {
-        print("draw(_ rect: CGRect) DrawImageView")
+        ///print("draw(_ rect: CGRect) DrawImageView")
         if self.type == .line{
             image?.draw(in: bounds) // export drawing
             brush?.drawInContext() // preview drawing
@@ -189,8 +185,8 @@ class DrawingView: UIView {
             brush?.drawInContext() // preview drawing
         }
     }
+    
 }
-
 
 extension TouchDrawView{
     
@@ -199,7 +195,7 @@ extension TouchDrawView{
         
         switch recognizer.state {
         case .began:
-            print("Begin      ")
+            /// print("Begin      ")
             brush = initBrushType()
             drawingView.brush = brush
             
@@ -211,7 +207,7 @@ extension TouchDrawView{
             brush?.lineWidth = lineWidth
             brush?.points.append(touchLocation)
         case .changed:
-            // print("Move    ", brushType)
+            ///print("Move    ", brushType)
             if let brush = self.brush {
                 brush.previousPoint2 = brush.previousPoint1
                 brush.previousPoint1 = brush.currentPoint
@@ -249,29 +245,12 @@ extension TouchDrawView{
                     
                     let angleR = atan2((top.currentPoint!.y - top.beginPoint!.y),(top.currentPoint!.x - top.beginPoint!.x))
                     
-                    var x: CGFloat = 0.0
-                    var y: CGFloat = 0.0
-                    
-                    if  (abs(top.beginPoint!.x - top.currentPoint!.x) > abs(top.beginPoint!.y - top.currentPoint!.y)) {
-                        if top.beginPoint!.x < top.currentPoint!.x{
-                            x = -44 // 44 is the button width which should be increase
-                        }else{
-                            x = 44
-                        }
-                    }else{
-                        if top.beginPoint!.y < top.currentPoint!.y{
-                            y = -64 
-                        }else{
-                            y = 20 // height 40 and minus 20 bcos rotating
-                        }
-                    }
-                    
-                    let frame = CGRect(x: top.beginPoint!.x + CGFloat(x), y: top.beginPoint!.y + CGFloat(y), width: dist  + CGFloat(88.0), height: top.lineWidth  + CGFloat(40.0))
+                    let frame = CGRect(x: top.beginPoint!.x, y: top.beginPoint!.y, width: dist  + CGFloat(88.0), height: top.lineWidth  + CGFloat(40.0))
                     if dist > 20{
                         //MARK: add Line OverView
                         self.addOverLayLineView(frame: frame, angle: angleR)
                     }
-                    //Hide line from backgound of overlay
+                    ///Hide line from backgound of overlay
                     drawingView.brush = nil
                     self.drawingView.setNeedsDisplay()
                 }else{
@@ -284,28 +263,33 @@ extension TouchDrawView{
         }
     }
     
-    @objc func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
-        print("Tapped Found on TouchDrawView")
-    }
+    //MARK: Handle Drawing View Single Touch Handler
     
-    func addOverLayLineView(frame: CGRect, angle: CGFloat){
-        let lineView = UIView(frame: frame) //CGRect(x: 0, y: 0, width: 100, height: 60)
-        lineView.backgroundColor = UIColor.clear
-        let overlayView = OverlayLineView.init(contentView: lineView, origin: frame.origin)
-        overlayView.showEditingHandlers = true
-        overlayView.delegate = self
-        overlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
-        overlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
-        //  stickerView.setImage(UIImage.init(named: "Flip")!, forHandler: StickerViewHandler.flip)
-        overlayView.showEditingHandlers = true
-        overlayView.tag = 999
-        overlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
-        overlayView.transform = CGAffineTransform(rotationAngle: angle)
-        overlayView.brush?.drawInContext()
-        self.addSubview(overlayView)
-        //Assaign activerOverlay
-        let activeOverlay = OverlayViewInfo(view: overlayView, width: overlayView.frame.size.width, height: overlayView.frame.size.height, angle: angle, position: overlayView.frame.origin)
-        self.activeOverlayView = activeOverlay
+    ///Next task Start from Here
+    @objc func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
+        //     print("Tapped Found on TouchDrawView")
+        let x = self.activeOverlayView.frame.origin.x
+       // print("X   ", x, self.activeOverlayView.brush?.beginPoint,"     ", self.activeOverlayView.brush?.currentPoint)
+        let y = self.activeOverlayView.center.y
+        let dist = self.activeOverlayView.bounds.size.width
+        let alph = atan2f(Float(activeOverlayView.transform.b), Float(activeOverlayView.transform.a))
+   
+        ///Find the second distance
+        let toX = x + (dist * CGFloat(cos(alph)))
+        let toY = y + (dist * CGFloat(sin(alph)))
+        
+        let temporaryBrush = LineBrush()
+        temporaryBrush.type = .line
+        temporaryBrush.beginPoint = CGPoint(x: toX, y: toY)
+        temporaryBrush.currentPoint = CGPoint(x: x, y: y)
+        temporaryBrush.lineColor = UIColor.red
+        temporaryBrush.lineAlpha = 1
+        temporaryBrush.lineWidth = 10
+        self.activeOverlayView.brush = temporaryBrush
+        self.drawingView.brush = temporaryBrush
+        self.drawingView.brush?.drawInContext()
+        self.drawingView.setNeedsDisplay()
+        ///self.activeOverlayView.isHidden = true
     }
     
 }
@@ -327,20 +311,20 @@ extension TouchDrawView {
     
     /// Begins the image context
     fileprivate func beginImageContext() {
-        print("beginImageContext() ")
+        //   print("beginImageContext() ")
         UIGraphicsBeginImageContextWithOptions(frame.size, false, UIScreen.main.scale)
     }
     
     /// Ends image context and sets UIImage to what was on the context
     fileprivate func endImageContext() {
-        print("endImageContext()")
+        //  print("endImageContext()")
         drawingView.image = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext()
     }
     
-    // Redraw image for undo action
+    /// Redraw image for undo action
     func redrawInContext() {
-        print("redrawInContext() ", brushStack.count)
+        //    print("redrawInContext() ", brushStack.count)
         beginImageContext()
         for brush in brushStack {
             brush.drawInContext()
@@ -350,21 +334,19 @@ extension TouchDrawView {
         prevImage = drawingView.image
     }
     
-    // Redraw last line for redo action
+    /// Redraw last line for redo action
     fileprivate func redrawWithBrush(_ brush: BaseBrush) {
-        print("redrawWithBrush(_ brush: BaseBrush)")
+        //  print("redrawWithBrush(_ brush: BaseBrush)")
         beginImageContext()
         drawingView.image?.draw(in: bounds)
-        if brush != nil {
-            brush.drawInContext()
-        }
+        brush.drawInContext()
         endImageContext()
         drawingView.setNeedsDisplay()
         prevImage = drawingView.image
     }
     
     fileprivate func clearDraw() {
-        print("clearDraw()")
+        ///  print("clearDraw()")
         brushStack.removeAll()
         beginImageContext()
         endImageContext()
@@ -396,41 +378,101 @@ extension TouchDrawView {
     }
 }
 
+extension TouchDrawView {
+    
+    func addOverLayLineView(frame: CGRect, angle: CGFloat) {
+        let lineView = UIView(frame: frame)
+        lineView.center.y = brush!.beginPoint!.y
+        let newPoint = self.newEndPoint(point1: self.brush!.currentPoint!, curr: lineView.frame.origin, d: -44) // 44 is the button size
+        lineView.frame.origin = newPoint
+        lineView.backgroundColor = UIColor.clear
+        
+        newOverlayView = OverlayLineView.init(contentView: lineView, origin: frame.origin)
+        newOverlayView.showEditingHandlers = true
+        newOverlayView.delegate = self
+        newOverlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
+        newOverlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
+        
+        newOverlayView.showEditingHandlers = true
+        newOverlayView.tag = stackIndex
+        newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+        newOverlayView.transform = CGAffineTransform(rotationAngle: angle)
+        newOverlayView.brush = self.brush
+        newOverlayView.brush!.beginPoint = CGPoint(x: 0, y: newOverlayView.bounds.size.height * 0.5)
+        newOverlayView.brush!.currentPoint = CGPoint(x: newOverlayView.bounds.size.width, y: newOverlayView.bounds.size.height * 0.5)
+        newOverlayView.brush?.drawInContext()
+        self.addSubview(newOverlayView)
+        
+        ///Assaign activerOverlay
+        /// let activeOverlay = OverlayViewInfo(view: overlayView, width: overlayView.frame.size.width, height: overlayView.frame.size.height, angle: angle, position: overlayView.frame.origin)
+        self.activeOverlayView = newOverlayView
+       /// print("A   ", self.activeOverlayView.frame,"      ", newOverlayView.frame)
+    }
+    
+    func newEndPoint(point1: CGPoint, curr: CGPoint, d: CGFloat) -> CGPoint {
+        let dist = self.distance(point1: point1, curr: curr)
+        let m = dist - d
+        let n = d
+        let x = (n * point1.x + m * curr.x) / dist
+        let y = (n * point1.y + m * curr.y) / dist
+        return CGPoint(x: x, y: y)
+    }
+    
+    func distance(point1: CGPoint, curr: CGPoint) -> CGFloat {
+        return sqrt((point1.x - curr.x) * (point1.x - curr.x) + (point1.y - curr.y) * (point1.y-curr.y))
+    }
+    
+}
+
 extension TouchDrawView: OverlayViewViewDelegate {
     
     public func overlayViewDidBeginMoving(_ stickerView: OverlayLineView) {
-        print("")
+        print("verlayViewDidBeginMoving ")
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidChangeMoving(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidChangeMoving  ", stickerView.frame.origin)
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidEndMoving(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidEndMoving  ")
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidBeginRotating(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidBeginRotating ")
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidChangeRotating(_ stickerView: OverlayLineView) {
-        print("")
+        ///Update draw in overlay view
+        self.activeOverlayView.brush?.lineColor = UIColor.green
+        self.activeOverlayView.brush!.beginPoint = CGPoint(x: 0, y: self.newOverlayView.bounds.size.height * 0.5)
+        self.activeOverlayView.brush!.currentPoint = CGPoint(x: self.activeOverlayView.bounds.size.width, y: self.activeOverlayView.bounds.size.height * 0.5)
+        self.activeOverlayView.brush?.drawInContext()
+       ///print("overlayViewDidChangeRotating  ", stickerView.frame.origin,"  ", self.activeOverlayView.frame.origin)
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidEndRotating(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidEndRotating  ")
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidClose(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidClose   ")
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidTap(_ stickerView: OverlayLineView) {
-        print("")
+        print("overlayViewDidTap  " )
+        self.activeOverlayView = stickerView
     }
     
     public func overlayViewDidUpdatedInfo(frame: CGRect, angle: CGFloat) {
-        print("")
+        print("overlayViewDidUpdatedInfo   ")
     }
+    
 }

@@ -36,7 +36,7 @@ open class BaseBrush: NSObject {
     
     internal func initContext(type: BrushType) -> CGContext? {
         self.type = type
-        print("InitContext in BaseBrush")
+   ///  print("InitContext in BaseBrush  ", type)
         let context = UIGraphicsGetCurrentContext()
         context?.setLineCap(.round)
         context?.setLineJoin(.round)
@@ -46,6 +46,7 @@ open class BaseBrush: NSObject {
         context?.setBlendMode(.normal)
         return context
     }
+    
 }
 
 

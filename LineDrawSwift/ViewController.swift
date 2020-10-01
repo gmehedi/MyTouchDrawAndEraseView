@@ -6,15 +6,12 @@
 //  Copyright © 2020 MacBook Pro. All rights reserved.
 //
 
-//let v = DrawingView(frame: self.containerView.frame)
-//       v.backgroundColor = UIColor.lightGray
-//       self.containerView.addSubview(v)
-
 import UIKit
 
-class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawViewDelegate{
+class ViewController: UIViewController, UIGestureRecognizerDelegate{
     
     @IBOutlet weak var drawingContainerView: TouchDrawView!
+    
     var lineView: UIView!
     var drawingView = DrawingView()
     
@@ -22,7 +19,6 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate, TouchDrawVi
         super.viewDidLoad()
         drawingContainerView.delegate = self
         drawingContainerView.lineWidth = 10
-        
     }
     
     @IBAction func tappedOnDrawButton(_ sender: UIButton) {
@@ -67,15 +63,15 @@ extension ViewController: OverlayViewViewDelegate{
     }
     
     func overlayViewDidChangeMoving(_ stickerView: OverlayLineView) {
-      // print("Chnage ")
+      /// print("Chnage ")
     }
     
     func overlayViewDidEndMoving(_ stickerView: OverlayLineView) {
-       // print("")
+       /// print("")
     }
     
     func overlayViewDidBeginRotating(_ stickerView: OverlayLineView) {
-      //  print("")
+      ///  print("")
     }
     
     func overlayViewDidChangeRotating(_ stickerView: OverlayLineView) {
@@ -83,14 +79,27 @@ extension ViewController: OverlayViewViewDelegate{
     }
     
     func overlayViewDidEndRotating(_ stickerView: OverlayLineView) {
-       // print("")
+       /// print("")
     }
     
     func overlayViewDidClose(_ stickerView: OverlayLineView) {
-       // print("")
+       /// print("")
     }
     
     func overlayViewDidTap(_ stickerView: OverlayLineView) {
-        //print("")
+        ///print("")
     }
+    
+}
+
+extension ViewController: TouchDrawViewDelegate{
+    
+    func undoEnable(_ isEnable: Bool) {
+        print("Undo")
+    }
+    
+    func redoEnable(_ isEnable: Bool) {
+        print("Redo")
+    }
+    
 }
