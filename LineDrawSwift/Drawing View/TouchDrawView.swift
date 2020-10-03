@@ -267,29 +267,53 @@ extension TouchDrawView{
     
     ///Next task Start from Here
     @objc func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
-        //     print("Tapped Found on TouchDrawView")
-        let x = self.activeOverlayView.frame.origin.x
-       // print("X   ", x, self.activeOverlayView.brush?.beginPoint,"     ", self.activeOverlayView.brush?.currentPoint)
-        let y = self.activeOverlayView.center.y
-        let dist = self.activeOverlayView.bounds.size.width
-        let alph = atan2f(Float(activeOverlayView.transform.b), Float(activeOverlayView.transform.a))
-   
-        ///Find the second distance
-        let toX = x + (dist * CGFloat(cos(alph)))
-        let toY = y + (dist * CGFloat(sin(alph)))
         
         let temporaryBrush = LineBrush()
         temporaryBrush.type = .line
-        temporaryBrush.beginPoint = CGPoint(x: toX, y: toY)
-        temporaryBrush.currentPoint = CGPoint(x: x, y: y)
+        
+        var (from, to) = self.findCordinateOfView(theView: self.activeOverlayView)
+        from = self.newEndPoint(to: to, from: from, d: (self.activeOverlayView.bounds.width * 0.5) + 44) // 44 Button size
+        to = self.newEndPoint(to: to, from: from, d: self.activeOverlayView.bounds.width - 88)
+        temporaryBrush.beginPoint = from
+        temporaryBrush.currentPoint = to
         temporaryBrush.lineColor = UIColor.red
         temporaryBrush.lineAlpha = 1
         temporaryBrush.lineWidth = 10
         self.activeOverlayView.brush = temporaryBrush
         self.drawingView.brush = temporaryBrush
         self.drawingView.brush?.drawInContext()
+        self.brush = self.drawingView.brush
         self.drawingView.setNeedsDisplay()
+        finishDrawing()
+        self.activeOverlayView.isHidden = true
         ///self.activeOverlayView.isHidden = true
+    }
+    
+    func findCordinateOfView(theView: UIView) -> (CGPoint, CGPoint){
+        let originalCenter: CGPoint = theView.center.applying(theView.transform.inverted())
+
+        var topLeft: CGPoint = originalCenter
+        topLeft.x -= theView.bounds.size.width / 2;
+        topLeft.y -= theView.bounds.size.height / 2;
+        topLeft = topLeft.applying(theView.transform);
+
+        var topRight: CGPoint = originalCenter;
+        topRight.x += theView.bounds.size.width / 2;
+        topRight.y -= theView.bounds.size.height / 2;
+        topRight = topRight.applying(theView.transform)
+
+        var bottomLeft: CGPoint = originalCenter;
+        bottomLeft.x -= theView.bounds.size.width / 2;
+        bottomLeft.y += theView.bounds.size.height / 2;
+        bottomLeft = bottomLeft.applying(theView.transform)
+
+        var bottomRight: CGPoint = originalCenter;
+        bottomRight.x += theView.bounds.size.width / 2;
+        bottomRight.y += theView.bounds.size.height / 2;
+        bottomRight = bottomRight.applying(theView.transform)
+        
+        print(topLeft,"   ", topRight,"     ", bottomLeft,"    ", bottomRight)
+        return (CGPoint(x: (topLeft.x + bottomLeft.x) * 0.5, y: (topLeft.y + bottomLeft.y) * 0.5), CGPoint(x: (bottomRight.x + topRight.x) * 0.5, y: (topRight.y + bottomRight.y) * 0.5))
     }
     
 }
@@ -383,7 +407,7 @@ extension TouchDrawView {
     func addOverLayLineView(frame: CGRect, angle: CGFloat) {
         let lineView = UIView(frame: frame)
         lineView.center.y = brush!.beginPoint!.y
-        let newPoint = self.newEndPoint(point1: self.brush!.currentPoint!, curr: lineView.frame.origin, d: -44) // 44 is the button size
+        let newPoint = self.newEndPoint(to: self.brush!.currentPoint!, from: lineView.frame.origin, d: -44) // 44 is the button size
         lineView.frame.origin = newPoint
         lineView.backgroundColor = UIColor.clear
         
@@ -409,12 +433,12 @@ extension TouchDrawView {
        /// print("A   ", self.activeOverlayView.frame,"      ", newOverlayView.frame)
     }
     
-    func newEndPoint(point1: CGPoint, curr: CGPoint, d: CGFloat) -> CGPoint {
-        let dist = self.distance(point1: point1, curr: curr)
+    func newEndPoint(to: CGPoint, from: CGPoint, d: CGFloat) -> CGPoint {
+        let dist = self.distance(point1: to, curr: from)
         let m = dist - d
         let n = d
-        let x = (n * point1.x + m * curr.x) / dist
-        let y = (n * point1.y + m * curr.y) / dist
+        let x = (n * to.x + m * from.x) / dist
+        let y = (n * to.y + m * from.y) / dist
         return CGPoint(x: x, y: y)
     }
     
