@@ -233,21 +233,21 @@ public class OverlayLineView: UIView{
         
         switch position {
         case .topLeft:
-          ///print(".topLeft")
-            handlerView?.center = origin // scale button
-            handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleBottomMargin]
+        print(".topLeft")
+        handlerView?.center = origin
+            handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .topRight:
-         ///   print(".topRight") // cross button
+            print(".topRight") // cross button
             handlerView?.center = CGPoint(x: origin.x, y: origin.y)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomLeft:
-          ///print(".bottomLeft")
+          print(".bottomLeft")
             handlerView?.center = CGPoint(x: origin.x, y: origin.y + size.height)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomRight:
-          ///print(".bottomRight")
-            handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y + (size.height * 0.5))
-            handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleTopMargin]
+        print(".bottomRight") // scale button
+        handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y)
+            handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
         }
         
         handlerView?.tag = position.rawValue
@@ -364,23 +364,49 @@ public class OverlayLineView: UIView{
             let angleDiff = Float (self.deltaAngle) - angle
             setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
             self.currentAngle = CGFloat(-angleDiff)
-            self.transform = CGAffineTransform(rotationAngle: CGFloat(-angleDiff))
+            if self.brush!.type == .line{
+                self.transform = CGAffineTransform(rotationAngle: CGFloat(-angleDiff))
+            }
             var scale = CGPointGetDistance(point1: center, point2: touchLocation) / self.initialDistance
             let minimumScale = CGFloat(self.minimumSize) / min(self.initialBounds.size.width, self.initialBounds.size.height)
             scale = max(scale, minimumScale)
-            let scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: 1)
-            self.bounds = scaledBounds
+            
+            print("Mode   ", recognizer.direction)
+            var scaledBounds: CGRect!
+            scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: (self.brush!.type == .line) ? 1 : scale)
+            
+//            if self.brush!.type == .line{
+//                scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: (self.brush!.type == .line) ? 1 : scale)
+//            }else{
+//                if recognizer.velocity(in: self.superview).x < recognizer.velocity(in: self.superview).y {
+//                    scaledBounds = CGRectScale(self.initialBounds, wScale: 1, hScale: scale)
+//                }else if recognizer.velocity(in: self.superview).x > recognizer.velocity(in: self.superview).y{
+//                    scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: 1)
+//               }else{
+//                    scaledBounds = CGRectScale(self.initialBounds, wScale: 1, hScale: 1)
+//                }
+//            }
+            print("Bounds   ", self.bounds)
+            
+            UIView.animate(withDuration: 0.3, animations:{
+                self.bounds = scaledBounds
+                
+                self.layoutIfNeeded()
+            })
+            self.brush?.drawInContext()
+            print("BBBB   ", self.brush?.currentPoint)
             self.setNeedsDisplay()
             
             if let delegate = self.delegate {
-                self.brush?.drawInContext()
                 delegate.overlayViewDidChangeRotating(self)
-                delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+               // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
         case .ended:
+            self.brush?.drawInContext()
+            self.setNeedsDisplay()
             if let delegate = self.delegate {
                 delegate.overlayViewDidEndRotating(self)
-                delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+               // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
         default:
             break

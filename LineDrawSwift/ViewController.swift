@@ -44,11 +44,28 @@ class ViewController: UIViewController, UIGestureRecognizerDelegate{
     }
     
     @IBAction func tappedOnUndo(_ sender: UIButton) {
-        drawingContainerView.undo()
+        //drawingContainerView.undo()
+        print("UndoLen  ", drawingContainerView.undoBrushStack.count)
+        let index = drawingContainerView.undoBrushStack.count - 1
+        if index < 0 {
+            return
+        }
+        drawingContainerView.redoBrushStack.append(drawingContainerView.undoBrushStack[index])
+        drawingContainerView.undoBrushStack.remove(at: index)
+        drawingContainerView.redrawInContext()
+        
     }
     
     @IBAction func tappedOnRedo(_ sender: UIButton) {
-        drawingContainerView.redo()
+        //drawingContainerView.redo()
+        print("RedoLen  ", drawingContainerView.redoBrushStack.count)
+        let index = drawingContainerView.redoBrushStack.count - 1
+        if index < 0 {
+            return
+        }
+        drawingContainerView.undoBrushStack.append(drawingContainerView.redoBrushStack[index])
+        drawingContainerView.redoBrushStack.remove(at: index)
+        drawingContainerView.redrawInContext()
     }
     
 }
