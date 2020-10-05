@@ -56,7 +56,7 @@ public class OverlayLineView: UIView{
     public var delegate: OverlayViewViewDelegate!
     /// The contentView inside the Overlay view.
     public var contentView:UIView!
-    
+    public var initialFrame: CGRect!
     ///Draw Line On OverLayView
     var image: UIImage?
     var brush: BaseBrush?
@@ -190,7 +190,7 @@ public class OverlayLineView: UIView{
      *  @param handler The editing handler.
      */
     public func setImage(_ image:UIImage, forHandler handler:StickerViewHandler) {
-      ///  print("setImage")
+        ///  print("setImage")
         switch handler {
         case .close:
             self.closeLineButton.setImage(UIImage(named: "Close"), for: .normal)
@@ -199,8 +199,8 @@ public class OverlayLineView: UIView{
             self.rotateLineButton.setImage(UIImage(named: "Rotate"), for: .normal)
             self.addSubview(rotateLineButton)
         case .flip:
-           print("Flip Off")
-           /// self.flipImageView.setImage(UIImage(named: "Flip"), for: .normal)
+            print("Flip Off")
+            /// self.flipImageView.setImage(UIImage(named: "Flip"), for: .normal)
         }
     }
     
@@ -233,20 +233,20 @@ public class OverlayLineView: UIView{
         
         switch position {
         case .topLeft:
-        print(".topLeft")
-        handlerView?.center = origin
+            print(".topLeft")
+            handlerView?.center = origin
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .topRight:
             print(".topRight") // cross button
             handlerView?.center = CGPoint(x: origin.x, y: origin.y)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomLeft:
-          print(".bottomLeft")
+            print(".bottomLeft")
             handlerView?.center = CGPoint(x: origin.x, y: origin.y + size.height)
             handlerView?.autoresizingMask = [.flexibleRightMargin, .flexibleTopMargin]
         case .bottomRight:
-        print(".bottomRight") // scale button
-        handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y)
+            print(".bottomRight") // scale button
+            handlerView?.center = CGPoint(x: origin.x + size.width, y: origin.y)
             handlerView?.autoresizingMask = [.flexibleLeftMargin, .flexibleBottomMargin]
         }
         
@@ -276,14 +276,12 @@ public class OverlayLineView: UIView{
         rotateButton.contentMode = .center
         rotateButton.backgroundColor = UIColor.gray
         rotateButton.isUserInteractionEnabled = true
-        rotateButton.addGestureRecognizer(self.rotateGesture)
-        ///print("Need to update")
-        
+        rotateButton.addGestureRecognizer(diagonalRotateGesture)
         return rotateButton
     }()
     
-    private lazy var rotateGesture = {
-        return UIPanGestureRecognizer(target: self, action: #selector(handleRotateGesture(_:)))
+    private lazy var diagonalRotateGesture = {
+        return UIPanGestureRecognizer(target: self, action: #selector(handleDiagonalPanGesture(_:)))
     }()
     
     private lazy var closeLineButton: UIButton = {
@@ -333,12 +331,12 @@ public class OverlayLineView: UIView{
             self.center = CGPoint(x: self.beginningCenter.x + (touchLocation.x - self.beginningPoint.x), y: self.beginningCenter.y + (touchLocation.y - self.beginningPoint.y))
             if let delegate = self.delegate {
                 delegate.overlayViewDidChangeMoving(self)
-                 delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+                delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
         case .ended:
             self.center = CGPoint(x: self.beginningCenter.x + (touchLocation.x - self.beginningPoint.x), y: self.beginningCenter.y + (touchLocation.y - self.beginningPoint.y))
             if let delegate = self.delegate {
-                 delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+                delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
                 delegate.overlayViewDidEndMoving(self)
             }
         default:
@@ -346,72 +344,162 @@ public class OverlayLineView: UIView{
         }
     }
     
-    @objc func handleRotateGesture(_ recognizer: UIPanGestureRecognizer) {
-        /// print("Scale Pan Gesture or Rotate Gesture")
+    @objc func handleDiagonalPanGesture(_ recognizer: UIPanGestureRecognizer) {
+        print("Scale Diagonaly")
         let touchLocation = recognizer.location(in: self.superview)
         let center = self.center
-        
+    
         switch recognizer.state {
         case .began:
             self.deltaAngle = CGFloat(atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))) - CGAffineTransformGetAngle(self.transform)
             self.initialBounds = self.bounds
+            self.initialFrame = self.frame
             self.initialDistance = CGPointGetDistance(point1: center, point2: touchLocation)
+            if self.brush!.type == .line{
+                setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+            }
+            
             if let delegate = self.delegate {
                 delegate.overlayViewDidBeginRotating(self)
             }
         case .changed:
-            let angle = atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))
-            let angleDiff = Float (self.deltaAngle) - angle
-            setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
-            self.currentAngle = CGFloat(-angleDiff)
             if self.brush!.type == .line{
+                let angle = atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))
+                let angleDiff = Float (self.deltaAngle) - angle
+                setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+                self.currentAngle = CGFloat(-angleDiff)
                 self.transform = CGAffineTransform(rotationAngle: CGFloat(-angleDiff))
             }
             var scale = CGPointGetDistance(point1: center, point2: touchLocation) / self.initialDistance
             let minimumScale = CGFloat(self.minimumSize) / min(self.initialBounds.size.width, self.initialBounds.size.height)
             scale = max(scale, minimumScale)
             
-            print("Mode   ", recognizer.direction)
-            var scaledBounds: CGRect!
-            scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: (self.brush!.type == .line) ? 1 : scale)
+            switch self.brush!.type {
+            case .line:
+                self.bounds = CGRectScale(self.initialBounds, wScale: scale, hScale: 1)
+            default:
+                if touchLocation.x - self.initialFrame.origin.x > 44 {
+                    self.frame = CGRect(origin: CGPoint(x: self.frame.origin.x, y: touchLocation.y), size: CGSize(width: touchLocation.x - self.initialFrame.origin.x, height: self.initialFrame.size.height + (initialFrame.origin.y - touchLocation.y)))
+                }
+            }
             
-//            if self.brush!.type == .line{
-//                scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: (self.brush!.type == .line) ? 1 : scale)
-//            }else{
-//                if recognizer.velocity(in: self.superview).x < recognizer.velocity(in: self.superview).y {
-//                    scaledBounds = CGRectScale(self.initialBounds, wScale: 1, hScale: scale)
-//                }else if recognizer.velocity(in: self.superview).x > recognizer.velocity(in: self.superview).y{
-//                    scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: 1)
-//               }else{
-//                    scaledBounds = CGRectScale(self.initialBounds, wScale: 1, hScale: 1)
-//                }
-//            }
-            print("Bounds   ", self.bounds)
-            
-            UIView.animate(withDuration: 0.3, animations:{
-                self.bounds = scaledBounds
-                
-                self.layoutIfNeeded()
-            })
             self.brush?.drawInContext()
-            print("BBBB   ", self.brush?.currentPoint)
             self.setNeedsDisplay()
             
             if let delegate = self.delegate {
                 delegate.overlayViewDidChangeRotating(self)
-               // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
         case .ended:
             self.brush?.drawInContext()
             self.setNeedsDisplay()
             if let delegate = self.delegate {
                 delegate.overlayViewDidEndRotating(self)
-               // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
             }
         default:
             break
         }
+        recognizer.setTranslation(.zero, in: self.superview)
     }
+    
+//    @objc func handleVerticalPanGesture(_ recognizer: UIPanGestureRecognizer) {
+//        print("Scale Verticallye")
+//        let touchLocation = recognizer.location(in: self.superview)
+//        let center = self.center
+//
+//        switch recognizer.state {
+//        case .began:
+//            self.deltaAngle = CGFloat(atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))) - CGAffineTransformGetAngle(self.transform)
+//            self.initialBounds = self.bounds
+//            self.initialDistance = CGPointGetDistance(point1: center, point2: touchLocation)
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidBeginRotating(self)
+//            }
+//        case .changed:
+//            if self.brush!.type == .line{
+//                let angle = atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))
+//                let angleDiff = Float (self.deltaAngle) - angle
+//                setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+//                self.currentAngle = CGFloat(-angleDiff)
+//                self.transform = CGAffineTransform(rotationAngle: CGFloat(-angleDiff))
+//            }
+//            setAnchorPoint(point: CGPoint(x: 0, y: 1))
+//            var scale = CGPointGetDistance(point1: center, point2: touchLocation) / self.initialDistance
+//            let minimumScale = CGFloat(self.minimumSize) /  self.initialBounds.size.height
+//            scale = max(scale, minimumScale)
+//            print("VSS   ", scale)
+//            let scaledBounds = CGRectScale(self.initialBounds, wScale: 1, hScale: scale)
+//            self.bounds = scaledBounds
+//
+//            self.brush?.drawInContext()
+//            self.setNeedsDisplay()
+//
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidChangeRotating(self)
+//                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+//            }
+//        case .ended:
+//            self.brush?.drawInContext()
+//            self.setNeedsDisplay()
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidEndRotating(self)
+//                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+//            }
+//        default:
+//            break
+//        }
+//    }
+//
+//    @objc func handleHorizontalPanGesture(_ recognizer: UIPanGestureRecognizer) {
+//        print("Scale Horizontaly")
+//        let touchLocation = recognizer.location(in: self.superview)
+//        let center = self.center
+//
+//        switch recognizer.state {
+//        case .began:
+//            self.deltaAngle = CGFloat(atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))) - CGAffineTransformGetAngle(self.transform)
+//            self.initialBounds = self.bounds
+//            self.initialDistance = CGPointGetDistance(point1: center, point2: touchLocation)
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidBeginRotating(self)
+//            }
+//        case .changed:
+//            if self.brush!.type == .line{
+//                let angle = atan2f(Float(touchLocation.y - center.y), Float(touchLocation.x - center.x))
+//                let angleDiff = Float (self.deltaAngle) - angle
+//                setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+//                self.currentAngle = CGFloat(-angleDiff)
+//                self.transform = CGAffineTransform(rotationAngle: CGFloat(-angleDiff))
+//            }
+//            var scale = CGPointGetDistance(point1: center, point2: touchLocation) / self.initialDistance
+//            print("SHHH   ", scale)
+//            let minimumScale = CGFloat(self.minimumSize) / min(self.initialBounds.size.width, self.initialBounds.size.height)
+//            scale = max(scale, minimumScale)
+//
+//            var scaledBounds: CGRect!
+//            scaledBounds = CGRectScale(self.initialBounds, wScale: scale, hScale: 1)
+//
+//            self.bounds = scaledBounds
+//
+//            self.brush?.drawInContext()
+//            self.setNeedsDisplay()
+//
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidChangeRotating(self)
+//                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+//            }
+//        case .ended:
+//            self.brush?.drawInContext()
+//            self.setNeedsDisplay()
+//            if let delegate = self.delegate {
+//                delegate.overlayViewDidEndRotating(self)
+//                // delegate.overlayViewDidUpdatedInfo(frame: self.frame, angle: self.currentAngle)
+//            }
+//        default:
+//            break
+//        }
+//    }
     
     @objc func handleCloseGesture(_ recognizer: UITapGestureRecognizer) {
         /// print("Handle Close Button")
@@ -464,22 +552,22 @@ extension OverlayLineView: UIGestureRecognizerDelegate {
 extension OverlayLineView{
     
     public func setAnchorPoint( point: CGPoint) {
-          var newPoint = CGPoint(x: bounds.size.width * point.x, y: bounds.size.height * point.y)
-          var oldPoint = CGPoint(x: bounds.size.width * layer.anchorPoint.x, y: bounds.size.height * layer.anchorPoint.y);
-
-          newPoint = newPoint.applying(transform)
-          oldPoint = oldPoint.applying(transform)
-
-          var position = layer.position
-
-          position.x -= oldPoint.x
-          position.x += newPoint.x
-
-          position.y -= oldPoint.y
-          position.y += newPoint.y
-
-          layer.position = position
-          layer.anchorPoint = point
-      }
+        var newPoint = CGPoint(x: bounds.size.width * point.x, y: bounds.size.height * point.y)
+        var oldPoint = CGPoint(x: bounds.size.width * layer.anchorPoint.x, y: bounds.size.height * layer.anchorPoint.y);
+        
+        newPoint = newPoint.applying(transform)
+        oldPoint = oldPoint.applying(transform)
+        
+        var position = layer.position
+        
+        position.x -= oldPoint.x
+        position.x += newPoint.x
+        
+        position.y -= oldPoint.y
+        position.y += newPoint.y
+        
+        layer.position = position
+        layer.anchorPoint = point
+    }
     
 }

@@ -17,7 +17,7 @@ open class EraserBrush: PenBrush {
     
     override func drawInContext() {
    ///  print("EraserBrush drawInContext()")
-        let context = initContext(type: .pen)
+        let context = initContext(type: .eraser)
         context?.setBlendMode(.clear)
         context?.addPath(path)
         context?.strokePath()

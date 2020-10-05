@@ -33,6 +33,7 @@ open class TouchDrawView: UIView {
     fileprivate var prevImage: UIImage?
     fileprivate var image: UIImage?
     fileprivate var newOverlayView: OverlayLineView!
+    fileprivate var allOverlayViews = [OverlayLineView]()
     
     var activeOverlayView: OverlayLineView!
     
@@ -173,6 +174,8 @@ extension TouchDrawView{
                 case .pen:
                     print("Line Draw Pen")
                     self.finishDrawing()
+                case .eraser:
+                    self.finishDrawing()
                 default:
                     print("Does not match any type")
                 }
@@ -216,7 +219,7 @@ extension TouchDrawView{
         newOverlayView.delegate = self
         newOverlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
         newOverlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
-        
+        newOverlayView.type = .line
         newOverlayView.showEditingHandlers = true
         newOverlayView.tag = stackIndex
         newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
@@ -252,10 +255,10 @@ extension TouchDrawView{
          newOverlayView.delegate = self
          newOverlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
          newOverlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
-         
+         newOverlayView.type = .ellipse
          newOverlayView.showEditingHandlers = true
          newOverlayView.tag = stackIndex
-         newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+         ///newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 1))
          newOverlayView.brush = self.brush
         // print("R Brush type   ", self.brush!.type)
          newOverlayView.brush!.beginPoint = CGPoint(x: 44, y: 44)
@@ -286,12 +289,12 @@ extension TouchDrawView{
         newOverlayView.delegate = self
         newOverlayView.setImage(UIImage.init(named: "Close")!, forHandler: StickerViewHandler.close)
         newOverlayView.setImage(UIImage.init(named: "Rotate")!, forHandler: StickerViewHandler.rotate)
-        
+        newOverlayView.type = .rect
         newOverlayView.showEditingHandlers = true
         newOverlayView.tag = stackIndex
-        newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 0.5))
+        ///newOverlayView.setAnchorPoint(point: CGPoint(x: 0, y: 1))
         newOverlayView.brush = self.brush
-       // print("R Brush type   ", self.brush!.type)
+        ///print("R Brush type   ", self.brush!.type)
         newOverlayView.brush!.beginPoint = CGPoint(x: 44, y: 44)
         newOverlayView.brush!.currentPoint = CGPoint(x: newOverlayView.bounds.size.width - 44, y: newOverlayView.bounds.size.height - 44)
         newOverlayView.brush?.drawInContext()
@@ -304,15 +307,34 @@ extension TouchDrawView{
         self.drawingView.setNeedsDisplay()
     }
     
-    //MARK: Handle Single Touch Handler On Drawing View Or Draw From Overlay View
+    //MARK: Handle Single Tap Handler On Drawing View Or Draw From Overlay View
     
     ///Next task Start from Here
     @objc func handleTapGesture(_ recognizer: UITapGestureRecognizer) {
         ///self.activeOverlayView.isHidden = true
+        let touchPoint = recognizer.location(in: self.superview)
+        print("Active   ", self.activeOverlayView)
         guard  (self.activeOverlayView != nil) else {
+            for overlay in self.allOverlayViews{
+                if overlay.type != .line {
+                    let fromX = overlay.frame.origin.x + 44
+                    let fromY = overlay.frame.origin.y + 44
+                    let toX = fromX + overlay.frame.size.width - 44
+                    let toY = fromY + overlay.frame.size.height - 44
+                    
+                    if touchPoint.x >= fromX && touchPoint.x <= toX && touchPoint.y >= fromY && touchPoint.y <= toY {
+                        overlay.isHidden = false
+                        self.activeOverlayView = overlay
+                    }
+                }
+                print("Overlay Type  :  ", overlay.type,"    ", overlay.frame)
+            }
             return
         }
         self.drawfromOverlayView(type: self.activeOverlayView.brush!.type)
+        ///Store All Overlay View
+        self.allOverlayViews.append(activeOverlayView)
+        self.activeOverlayView = nil
     }
     
     func drawfromOverlayView(type: BrushType){
@@ -360,8 +382,8 @@ extension TouchDrawView{
         print("Hi ")
         self.drawingView.brush = self.activeOverlayView.brush
         let (topLeft, _, bottomLeft, bottomRight) = self.findCordinateOfView(theView: self.activeOverlayView)
-        self.drawingView.brush!.beginPoint = CGPoint(x: topLeft.x + (self.activeOverlayView.bounds.size.width * 0.5) + 44, y: topLeft.y + 44)
-        self.drawingView.brush!.currentPoint = CGPoint(x: bottomRight.x + (self.activeOverlayView.bounds.size.width * 0.5) - 44, y: bottomLeft.y - 44)
+        self.drawingView.brush!.beginPoint = CGPoint(x: topLeft.x + 44, y: topLeft.y + 44)
+        self.drawingView.brush!.currentPoint = CGPoint(x: bottomRight.x - 44, y: bottomLeft.y - 44)
         self.drawingView.brush!.drawInContext()
         self.brush = self.drawingView.brush!
         self.drawingView.setNeedsDisplay()
@@ -377,8 +399,8 @@ extension TouchDrawView{
         print("Hi ")
         self.drawingView.brush = self.activeOverlayView.brush
         let (topLeft, _, bottomLeft, bottomRight) = self.findCordinateOfView(theView: self.activeOverlayView)
-        self.drawingView.brush!.beginPoint = CGPoint(x: topLeft.x + (self.activeOverlayView.bounds.size.width * 0.5) + 44, y: topLeft.y + 44)
-        self.drawingView.brush!.currentPoint = CGPoint(x: bottomRight.x + (self.activeOverlayView.bounds.size.width * 0.5) - 44, y: bottomLeft.y - 44)
+        self.drawingView.brush!.beginPoint = CGPoint(x: topLeft.x + 44, y: topLeft.y + 44)
+        self.drawingView.brush!.currentPoint = CGPoint(x: bottomRight.x - 44, y: bottomLeft.y - 44)
         self.drawingView.brush!.drawInContext()
         self.brush = self.drawingView.brush!
         self.drawingView.setNeedsDisplay()
