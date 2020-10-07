@@ -73,9 +73,9 @@ public enum Direction: Int {
 
 public extension UIPanGestureRecognizer {
 
-    public var direction: Direction? {
+    var direction: Direction? {
         let velo = velocity(in: self.view)
-        let vertical = fabs(velo.y) > fabs(velo.x)
+        let vertical = abs(velo.y) > abs(velo.x)
         switch (vertical, velo.x, velo.y) {
         case (true, _, let y) where y < 0: return .Up
         case (true, _, let y) where y > 0: return .Down

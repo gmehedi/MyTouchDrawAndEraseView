@@ -10,64 +10,88 @@ import UIKit
 
 class ViewController: UIViewController, UIGestureRecognizerDelegate{
     
-    @IBOutlet weak var drawingContainerView: TouchDrawView!
-    
+    @IBOutlet weak var exportImageView: UIImageView!
+    @IBOutlet weak var drawingContainerView: UIView!
+    var v: TouchDrawView!
     var lineView: UIView!
     var drawingView = DrawingView()
+    var outputSize: CGSize!
+    let screenWidth = UIScreen.main.bounds.size.width
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        drawingContainerView.delegate = self
-        drawingContainerView.lineWidth = 10
+        print("Did Load")
+        self.outputSize = CGSize(width: screenWidth, height: screenWidth)
+        let nextPhoto = UIImage(named: "img1")
+        print("Image  Size  ", nextPhoto!.size)
+        let horizontalRatio = CGFloat(self.outputSize.width) / nextPhoto!.size.width
+        let verticalRatio = CGFloat(self.outputSize.height) / nextPhoto!.size.height
+        //let aspectRatio = max(horizontalRatio, verticalRatio) // ScaleAspectFill
+        let aspectRatio = min(horizontalRatio, verticalRatio) // ScaleAspectFit
+        let newSize: CGSize = CGSize(width: nextPhoto!.size.width * aspectRatio, height: nextPhoto!.size.height * aspectRatio)
+        let x = newSize.width < self.outputSize.width ? (self.outputSize.width - newSize.width) / 2 : 0
+        let y = newSize.height < self.outputSize.height ? (self.outputSize.height - newSize.height) / 2 : 0
+        v = TouchDrawView(frame: CGRect(x: x, y: y, width: newSize.width, height: newSize.height))
+      //  v.frame = CGRect(x: x, y: y, width: newSize.width, height: newSize.height)
+        v!.delegate = self
+        v!.lineWidth = 10
+        v!.setImage(UIImage(named: "img1")!)
+        v.clipsToBounds = true
+        self.drawingContainerView.addSubview(v)
+        
     }
     
     @IBAction func tappedOnDrawButton(_ sender: UIButton) {
-        drawingContainerView.brushType = BrushType.pen
+        v!.brushType = BrushType.pen
         print("Draw")
     }
     
     @IBAction func tappedOnEraseButton(_ sender: UIButton) {
-         drawingContainerView.brushType = BrushType.eraser
-        print("Eraser")
+         v!.brushType = BrushType.eraser
     }
     
     @IBAction func tappedOnLine(_ sender: UIButton) {
-        drawingContainerView.brushType = BrushType.line
+        v!.brushType = BrushType.line
     }
     
     @IBAction func tappedOnRect(_ sender: Any) {
-        drawingContainerView.brushType = BrushType.rect
+        v!.brushType = BrushType.rect
     }
     
     @IBAction func tappedOnEllips(_ sender: UIButton) {
-        drawingContainerView.brushType = BrushType.ellipse
+        v!.brushType = BrushType.ellipse
     }
     
     @IBAction func tappedOnUndo(_ sender: UIButton) {
         //drawingContainerView.undo()
-        print("UndoLen  ", drawingContainerView.undoBrushStack.count)
-        let index = drawingContainerView.undoBrushStack.count - 1
+        print("UndoLen  ", v!.undoBrushStack.count)
+        let index = v!.undoBrushStack.count - 1
         if index < 0 {
             return
         }
-        drawingContainerView.redoBrushStack.append(drawingContainerView.undoBrushStack[index])
-        drawingContainerView.undoBrushStack.remove(at: index)
-        drawingContainerView.redrawInContext()
+        v!.redoBrushStack.append(v!.undoBrushStack[index])
+        v!.undoBrushStack.remove(at: index)
+        v!.redrawInContext()
         
     }
     
     @IBAction func tappedOnRedo(_ sender: UIButton) {
         //drawingContainerView.redo()
-        print("RedoLen  ", drawingContainerView.redoBrushStack.count)
-        let index = drawingContainerView.redoBrushStack.count - 1
+        print("RedoLen  ", v!.redoBrushStack.count)
+        let index = v!.redoBrushStack.count - 1
         if index < 0 {
             return
         }
-        drawingContainerView.undoBrushStack.append(drawingContainerView.redoBrushStack[index])
-        drawingContainerView.redoBrushStack.remove(at: index)
-        drawingContainerView.redrawInContext()
+        v!.undoBrushStack.append(v!.redoBrushStack[index])
+        v!.redoBrushStack.remove(at: index)
+        v!.redrawInContext()
     }
     
+    @IBAction func tappedOnExportButton(_ sender: UIButton) {
+        let image = v.exportImage()
+        self.exportImageView.image = image
+        print("Export Image   ",image!.size)
+    }
 }
 extension ViewController: OverlayViewViewDelegate{
     

@@ -46,12 +46,23 @@ open class TouchDrawView: UIView {
         return UITapGestureRecognizer(target: self, action: #selector(handleTapGesture(_:)))
     }()
     
+    public required override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.addSubview(drawingView)
+        drawingView.backgroundColor = UIColor.clear
+        self.addGestureRecognizer(tapGesture)
+        self.addGestureRecognizer(scaleGesture)
+        self.drawingView.contentMode = .scaleAspectFit
+
+    }
+    
     public required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
         self.addSubview(drawingView)
         drawingView.backgroundColor = UIColor.clear
         self.addGestureRecognizer(tapGesture)
         self.addGestureRecognizer(scaleGesture)
+        self.drawingView.contentMode = .scaleAspectFit
     }
     
     /// Sets the frames of the subviews
@@ -94,9 +105,9 @@ open class TouchDrawView: UIView {
     /// Export drawn image
     open func exportImage() -> UIImage? {
         print("exportImage()")
-        beginImageContext()
-        self.image?.draw(in: self.bounds)
-        drawingView.image?.draw(in: self.bounds)
+        beginImageContext(size: self.image!.size)
+        self.image?.draw(in: CGRect(x: 0, y: 0, width: image!.size.width, height: image!.size.height)) //self.bounds
+        drawingView.image?.draw(in: CGRect(x: 0, y: 0, width: image!.size.width, height: image!.size.height))
         return UIGraphicsGetImageFromCurrentImageContext()
     }
     
@@ -125,7 +136,7 @@ open class TouchDrawView: UIView {
 extension TouchDrawView{
     
     @objc func handleScaleGesture(_ recognizer: UIPanGestureRecognizer) {
-        let touchLocation = recognizer.location(in: self.superview)
+        let touchLocation = recognizer.location(in: self)
         
         switch recognizer.state {
         case .began:
@@ -153,8 +164,10 @@ extension TouchDrawView{
                     drawBox.size.width += lineWidth * 4
                     drawBox.size.height += lineWidth * 4
                     self.drawingView.setNeedsDisplay(drawBox)
+                   // self.image?.draw(in: self.bounds)
                     self.drawingView.setNeedsDisplay()
                 } else {
+                   // self.image?.draw(in: self.bounds)
                     self.drawingView.setNeedsDisplay()
                 }
             }
@@ -458,9 +471,9 @@ extension TouchDrawView {
     }
     
     /// Begins the image context
-    fileprivate func beginImageContext() {
-        //   print("beginImageContext() ")
-        UIGraphicsBeginImageContextWithOptions(frame.size, false, UIScreen.main.scale)
+    fileprivate func beginImageContext(size: CGSize) {
+        print("beginImageContext() ", size,"   ",  UIScreen.main.scale)
+        UIGraphicsBeginImageContextWithOptions(size, false, 0)
     }
     
     /// Ends image context and sets UIImage to what was on the context
@@ -473,7 +486,7 @@ extension TouchDrawView {
     /// Redraw image for undo action
     func redrawInContext() {
         //    print("redrawInContext() ", brushStack.count)
-        beginImageContext()
+        beginImageContext(size: self.image!.size)
         for brush in undoBrushStack {
             brush.drawInContext()
         }
@@ -485,7 +498,7 @@ extension TouchDrawView {
     /// Redraw last line for redo action
     fileprivate func redrawWithBrush(_ brush: BaseBrush) {
         //  print("redrawWithBrush(_ brush: BaseBrush)")
-        beginImageContext()
+        beginImageContext(size: self.image!.size)
         drawingView.image?.draw(in: bounds)
         brush.drawInContext()
         endImageContext()
@@ -496,7 +509,7 @@ extension TouchDrawView {
     fileprivate func clearDraw() {
         ///  print("clearDraw()")
         undoBrushStack.removeAll()
-        beginImageContext()
+        beginImageContext(size: self.image!.size)
         endImageContext()
         prevImage = nil
         drawingView.setNeedsDisplay()

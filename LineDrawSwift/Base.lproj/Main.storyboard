@@ -1,8 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="16097.3" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="BYZ-38-t0r">
+    <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="16087"/>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
         <capability name="Safe area layout guides" minToolsVersion="9.0"/>
+        <capability name="System colors in document resources" minToolsVersion="11.0"/>
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
@@ -11,61 +14,64 @@
             <objects>
                 <viewController id="BYZ-38-t0r" customClass="ViewController" customModule="LineDrawSwift" customModuleProvider="target" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="8bC-Xf-vdC">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cGg-yT-wvT" customClass="TouchDrawView" customModule="LineDrawSwift" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="488"/>
-                                <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="cGg-yT-wvT">
+                                <rect key="frame" x="0.0" y="44" width="414" height="414"/>
+                                <color key="backgroundColor" systemColor="systemGreenColor"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" secondItem="cGg-yT-wvT" secondAttribute="height" multiplier="1:1" id="khR-Cj-MMU"/>
+                                </constraints>
                             </view>
                             <stackView opaque="NO" contentMode="scaleToFill" distribution="fillEqually" alignment="bottom" spacing="8" translatesAutoresizingMaskIntoConstraints="NO" id="IFe-R7-qSA">
-                                <rect key="frame" x="0.0" y="552" width="600" height="48"/>
+                                <rect key="frame" x="0.0" y="821" width="414" height="41"/>
                                 <subviews>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iNI-KP-b4M">
-                                        <rect key="frame" x="0.0" y="0.0" width="113.5" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="iNI-KP-b4M">
+                                        <rect key="frame" x="0.0" y="0.0" width="76.5" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="23"/>
                                         <state key="normal" title="Draw">
-                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" systemColor="systemOrangeColor"/>
                                         </state>
                                         <connections>
                                             <action selector="tappedOnDrawButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="dbP-4A-59h"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7If-xx-mNA">
-                                        <rect key="frame" x="121.5" y="0.0" width="113.5" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="7If-xx-mNA">
+                                        <rect key="frame" x="84.5" y="0.0" width="76.5" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                         <state key="normal" title="Eraser">
-                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" systemColor="systemOrangeColor"/>
                                         </state>
                                         <connections>
                                             <action selector="tappedOnEraseButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="BG9-hu-IMM"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="81a-gC-y3y">
-                                        <rect key="frame" x="243" y="0.0" width="114" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="81a-gC-y3y">
+                                        <rect key="frame" x="169" y="0.0" width="76" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                         <state key="normal" title="Line">
-                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" systemColor="systemOrangeColor"/>
                                         </state>
                                         <connections>
                                             <action selector="tappedOnLine:" destination="BYZ-38-t0r" eventType="touchUpInside" id="wod-jo-mWV"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hr5-Wk-uwA">
-                                        <rect key="frame" x="365" y="0.0" width="113.5" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="Hr5-Wk-uwA">
+                                        <rect key="frame" x="253" y="0.0" width="76.5" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                         <state key="normal" title="Rect">
-                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" systemColor="systemOrangeColor"/>
                                         </state>
                                         <connections>
                                             <action selector="tappedOnRect:" destination="BYZ-38-t0r" eventType="touchUpInside" id="nYr-xQ-vng"/>
                                         </connections>
                                     </button>
-                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVi-nO-MUV">
-                                        <rect key="frame" x="486.5" y="0.0" width="113.5" height="48"/>
+                                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GVi-nO-MUV">
+                                        <rect key="frame" x="337.5" y="0.0" width="76.5" height="41"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="24"/>
                                         <state key="normal" title="Ellips">
-                                            <color key="titleColor" systemColor="systemOrangeColor" red="1" green="0.58431372550000005" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                            <color key="titleColor" systemColor="systemOrangeColor"/>
                                         </state>
                                         <connections>
                                             <action selector="tappedOnEllips:" destination="BYZ-38-t0r" eventType="touchUpInside" id="sgG-DM-Not"/>
@@ -87,21 +93,21 @@
                                     <constraint firstItem="81a-gC-y3y" firstAttribute="top" secondItem="IFe-R7-qSA" secondAttribute="top" id="jpM-ca-cST"/>
                                 </constraints>
                             </stackView>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6r7-lO-ryU">
-                                <rect key="frame" x="300" y="488" width="300" height="64"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="6r7-lO-ryU">
+                                <rect key="frame" x="207" y="757" width="207" height="64"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="64" id="bYH-zZ-VRP"/>
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <state key="normal" title="Redo">
-                                    <color key="titleColor" systemColor="systemTealColor" red="0.35294117650000001" green="0.7843137255" blue="0.98039215690000003" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    <color key="titleColor" systemColor="systemTealColor"/>
                                 </state>
                                 <connections>
                                     <action selector="tappedOnRedo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="XwR-AJ-tEb"/>
                                 </connections>
                             </button>
-                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RPq-o9-2Gg">
-                                <rect key="frame" x="0.0" y="488" width="300" height="64"/>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="RPq-o9-2Gg">
+                                <rect key="frame" x="0.0" y="770" width="207" height="51"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="32"/>
                                 <state key="normal" title="Undo">
                                     <color key="titleColor" red="0.78039215689999997" green="0.41903586968661144" blue="0.55248571860479045" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
@@ -110,29 +116,51 @@
                                     <action selector="tappedOnUndo:" destination="BYZ-38-t0r" eventType="touchUpInside" id="Y74-Me-5rv"/>
                                 </connections>
                             </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="cRP-T8-hEH">
+                                <rect key="frame" x="0.0" y="706" width="414" height="64"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="64" id="426-a2-kB2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="28"/>
+                                <state key="normal" title="Export">
+                                    <color key="titleColor" red="1" green="0.29373254082372602" blue="0.46825419474487673" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="tappedOnExportButton:" destination="BYZ-38-t0r" eventType="touchUpInside" id="qHK-A1-9UW"/>
+                                </connections>
+                            </button>
+                            <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="sxT-kX-Qbf">
+                                <rect key="frame" x="0.0" y="458" width="414" height="248"/>
+                                <color key="backgroundColor" red="1" green="0.64150145300000005" blue="0.98543024300000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </imageView>
                         </subviews>
-                        <color key="backgroundColor" systemColor="systemBackgroundColor" cocoaTouchSystemColor="whiteColor"/>
+                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
+                        <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         <constraints>
+                            <constraint firstItem="sxT-kX-Qbf" firstAttribute="top" secondItem="cGg-yT-wvT" secondAttribute="bottom" id="1gE-og-czn"/>
                             <constraint firstItem="IFe-R7-qSA" firstAttribute="top" secondItem="6r7-lO-ryU" secondAttribute="bottom" id="2SG-UD-GMZ"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="sxT-kX-Qbf" secondAttribute="trailing" id="3p8-c3-d2f"/>
                             <constraint firstItem="6r7-lO-ryU" firstAttribute="leading" secondItem="RPq-o9-2Gg" secondAttribute="trailing" id="5Ss-dD-e8V"/>
+                            <constraint firstItem="cRP-T8-hEH" firstAttribute="top" secondItem="sxT-kX-Qbf" secondAttribute="bottom" id="74o-nW-g7z"/>
                             <constraint firstItem="IFe-R7-qSA" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="7XK-u4-FvX"/>
+                            <constraint firstItem="sxT-kX-Qbf" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="9PV-iv-yXI"/>
+                            <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cRP-T8-hEH" secondAttribute="trailing" id="ALa-UD-rds"/>
+                            <constraint firstItem="cRP-T8-hEH" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="DMq-L2-C4y"/>
                             <constraint firstItem="IFe-R7-qSA" firstAttribute="bottom" secondItem="6Tk-OE-BBY" secondAttribute="bottom" id="Q5e-WM-BY9"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="IFe-R7-qSA" secondAttribute="trailing" id="QTh-eu-Jmb"/>
                             <constraint firstItem="RPq-o9-2Gg" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="Saw-Y9-kB1"/>
-                            <constraint firstItem="IFe-R7-qSA" firstAttribute="height" secondItem="6Tk-OE-BBY" secondAttribute="height" multiplier="0.08" id="Tlh-NL-3i4"/>
-                            <constraint firstItem="6r7-lO-ryU" firstAttribute="top" secondItem="cGg-yT-wvT" secondAttribute="bottom" id="UnC-tr-Lwb"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="6r7-lO-ryU" secondAttribute="trailing" id="dq9-L1-6SP"/>
                             <constraint firstItem="cGg-yT-wvT" firstAttribute="top" secondItem="6Tk-OE-BBY" secondAttribute="top" id="fVr-cj-7bf"/>
-                            <constraint firstItem="RPq-o9-2Gg" firstAttribute="top" secondItem="cGg-yT-wvT" secondAttribute="bottom" id="jqz-AI-EGv"/>
+                            <constraint firstItem="RPq-o9-2Gg" firstAttribute="top" secondItem="cRP-T8-hEH" secondAttribute="bottom" id="ikz-ip-T6s"/>
                             <constraint firstItem="IFe-R7-qSA" firstAttribute="top" secondItem="RPq-o9-2Gg" secondAttribute="bottom" id="onU-46-Obr"/>
                             <constraint firstItem="cGg-yT-wvT" firstAttribute="leading" secondItem="6Tk-OE-BBY" secondAttribute="leading" id="pdf-9q-3Hy"/>
                             <constraint firstItem="6Tk-OE-BBY" firstAttribute="trailing" secondItem="cGg-yT-wvT" secondAttribute="trailing" id="qpi-fO-puT"/>
                             <constraint firstItem="6r7-lO-ryU" firstAttribute="width" secondItem="cGg-yT-wvT" secondAttribute="width" multiplier="0.5" id="y6H-25-9Xd"/>
                         </constraints>
-                        <viewLayoutGuide key="safeArea" id="6Tk-OE-BBY"/>
                     </view>
                     <connections>
-                        <outlet property="drawingContainerView" destination="cGg-yT-wvT" id="Zb9-v9-z2c"/>
+                        <outlet property="drawingContainerView" destination="cGg-yT-wvT" id="9Zy-lj-udI"/>
+                        <outlet property="exportImageView" destination="sxT-kX-Qbf" id="5Id-Wi-Z1I"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="dkx-z0-nzr" sceneMemberID="firstResponder"/>
@@ -140,4 +168,18 @@
             <point key="canvasLocation" x="137.68115942028987" y="101.78571428571428"/>
         </scene>
     </scenes>
+    <resources>
+        <systemColor name="systemBackgroundColor">
+            <color white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+        </systemColor>
+        <systemColor name="systemGreenColor">
+            <color red="0.20392156862745098" green="0.7803921568627451" blue="0.34901960784313724" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemOrangeColor">
+            <color red="1" green="0.58431372549019611" blue="0.0" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+        <systemColor name="systemTealColor">
+            <color red="0.35294117647058826" green="0.78431372549019607" blue="0.98039215686274506" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+        </systemColor>
+    </resources>
 </document>
